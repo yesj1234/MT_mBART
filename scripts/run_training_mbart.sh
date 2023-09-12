@@ -80,6 +80,14 @@ run_training_mbart.json
     #         when all data is exhausted
     #     lr_scheduler_type (`str` or [`SchedulerType`], *optional*, defaults to `"linear"`):
     #         The scheduler type to use. See the documentation of [`SchedulerType`] for all possible values.
+    #           LINEAR = "linear"
+    #           COSINE = "cosine"
+    #           COSINE_WITH_RESTARTS = "cosine_with_restarts"
+    #           POLYNOMIAL = "polynomial"
+    #           CONSTANT = "constant"
+    #           CONSTANT_WITH_WARMUP = "constant_with_warmup"
+    #           INVERSE_SQRT = "inverse_sqrt"
+    #           REDUCE_ON_PLATEAU = "reduce_lr_on_plateau"
     #     warmup_ratio (`float`, *optional*, defaults to 0.0):
     #         Ratio of total training steps used for a linear warmup from 0 to `learning_rate`.
     #     warmup_steps (`int`, *optional*, defaults to 0):
