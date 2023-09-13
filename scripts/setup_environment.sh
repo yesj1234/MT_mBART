@@ -1,4 +1,4 @@
-# # 1. install gcc and cmake
+# 1. install gcc and cmake
 sudo apt install -y gcc
 sudo apt install -y cmake
 
@@ -19,14 +19,14 @@ pip install sentencepiece sacrebleu
 pip install -U protobuf
 pip install --upgrade protobuf
 
-# fairseq installation
-# cd ~ 
-# git clone https://github.com/facebookresearch/fairseq.git
-# cd fairseq
-# pip install --editable ./
+# # fairseq installation
+# # cd ~ 
+# # git clone https://github.com/facebookresearch/fairseq.git
+# # cd fairseq
+# # pip install --editable ./
 
-# download the base model for model pruning
-cd ~ 
-wget https://dl.fbaipublicfiles.com/fairseq/models/mbart/mbart.cc25.v2.tar.gz
-tar -xvzf mbart.cc25.v2.tar.gz
+# # download the base model for model pruning
+# cd ~ 
+# wget https://dl.fbaipublicfiles.com/fairseq/models/mbart/mbart.cc25.v2.tar.gz
+# tar -xvzf mbart.cc25.v2.tar.gz
 

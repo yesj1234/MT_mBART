@@ -21,7 +21,7 @@ def main(args):
                             rows.append({f"{args.source_lang}": source_lang, f"{args.target_lang}": target_lang})
                 new_json["translation"] = rows
                 #3. dump split.json
-                with open(f"{split_name}.json", "w+", encoding="utf-8") as js:
+                with open(os.path.join(root, f"{split_name}.json"), "w+", encoding="utf-8") as js:
                     json.dump(new_json, js, ensure_ascii=False)
 
 

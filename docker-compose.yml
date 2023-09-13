@@ -1,0 +1,17 @@
+version: "3"
+services:
+  ai_module:
+    image: mbart
+    tty: true 
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['0', '1', '2', '3']
+              capabilities: [gpu]
+    volumes:
+      - /home/ubuntu/MT_mBART/scripts:/home/scripts
+      - /home/ubuntu/data:/home/data
+      
+  

@@ -1,7 +1,7 @@
 {
-    "model_name_or_path": "./pruned_model.pt",
+    "model_name_or_path": "./reduced_model",
     "source_lang": "ko_KR",
-    "target_lang": "en_XX",
+    "target_lang": "ja_XX",
     "pad_to_max_length": true,
     "output_dir": "./tst-translation-output",
     "per_device_train_batch_size": 2,
@@ -13,15 +13,14 @@
     "do_eval": true,
     "do_predict": true,
     "predict_with_generate": true,
-    "train_file": "/home/ubuntu/data/train.json",
-    "validation_file": "/home/ubuntu/data/validation.json",
-    "test_file": "/home/ubuntu/data/test.json",
+    "train_file": "/home/data/mt_split/train.json",
+    "validation_file": "/home/data/mt_split/validation.json",
+    "test_file": "/home/data/mt_split/test.json",
     "num_train_epochs": 40,
-    "save_strategy": "epochs",
-    "evaluation_strategy": "epochs",
+    "save_strategy": "epoch",
+    "evaluation_strategy": "epoch",
     "save_total_limit": 1,
     "warmup_ratio": 0.1,
     "fp16": true,
-    "lr_scheduler_type": "reduce_lr_on_plateau",
-    "label_smoothing_factor": 0.2
+    "lr_scheduler_type": "reduce_lr_on_plateau"
 }
