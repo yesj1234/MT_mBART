@@ -155,11 +155,11 @@ sudo docker run --rm --gpus all ubuntu:20.04 nvidia-smi
 ## Simply run the training scripts in 4 steps with docker. 
 1. build 
 ```bash
-sudo docker build -t mbart .
+sudo docker build -t mbart . # don't change the name of the image
 ```
 2. run
 ```bash
-bash run_container.sh
+bash run_container.sh # sudo docker run -it --ipc host --gpus all -v /home/ubuntu/data:/home/data -v /home/ubuntu/MT_mBART/scripts:/home/scripts mbart bash
 ``` 
 3. preprocess(inside the container)
 ```bash
