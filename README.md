@@ -152,7 +152,7 @@ sudo systemctl restart docker
 ```bash
 sudo docker run --rm --gpus all ubuntu:20.04 nvidia-smi
 ```
-## Simply run the training scripts in 3 steps with docker. 
+## Simply run the training scripts in 4 steps with docker. 
 1. build 
 ```bash
 sudo docker build -t mbart .
@@ -168,18 +168,6 @@ bash reduce_model_ko-ja.sh # bash reduce_model_<source_lang>-<target_lang>.sh
 4. and, train!
 ```bash
 bash run_training_mbart.sh
-```
-
-# Multi gpu 환경에서 trainer api 사용하기.
-
-1. bash로 python script 실행 하기 혹은 그냥 python 명령어 실행.
-
-```bash
-LOCAL_RANK=0,1,2,3 \
-CUDA_VISIBLE_DEVICES=0,1,2,3 \
-python3 -m torch.distributed.launch --nproc_per_node 4 \
---use-env run_translation.py \
-run_translation_gpu_mt.json
 ```
 # ENVIRONMENT
 - OS: Canonical Ubuntu 20.04 
