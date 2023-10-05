@@ -3,7 +3,7 @@
     "source_lang": "ko_KR",
     "target_lang": "zh_CN",
     "pad_to_max_length": true,
-    "output_dir": "./tst-translation-output2",
+    "output_dir": "./tst-translation-output4",
     "per_device_train_batch_size": 4,
     "per_device_eval_batch_size": 4,
     "overwrite_output_dir": true,
@@ -20,8 +20,8 @@
     "evaluation_strategy": "steps",
     "eval_steps": 2000,
     "save_total_limit": 1,
-    "warmup_steps": 1500,
     "fp16": true,
+    "warmup_steps": 1500,
     "load_best_model_at_end": true,
     "metric_for_best_model": "bleu"
 }

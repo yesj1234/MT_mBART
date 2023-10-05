@@ -588,9 +588,9 @@ def main():
         # Some simple post-processing
         decoded_preds, decoded_labels = postprocess_text(decoded_preds, decoded_labels)
         
-        for pred, label in zip(decoded_preds, decoded_labels):
-            logger.critical(f"predicition: {decoded_preds}")
-            logger.critical(f"reference  : {decoded_labels[0]}")
+        # for pred, label in zip(decoded_preds, decoded_labels):
+        #     logger.critical(f"predicition: {decoded_preds}")
+        #     logger.critical(f"reference  : {decoded_labels[0]}")
         
         result = metric.compute(predictions=decoded_preds, references=decoded_labels)
         result = {"bleu": result["score"]}
