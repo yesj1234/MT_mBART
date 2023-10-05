@@ -42,6 +42,7 @@ def main(args)->None:
 	config.vocab_size = len(ft_dict)
 	print(config)
 	new_model = MBartForConditionalGeneration.from_pretrained(None, config = config, state_dict = resized_sd)
+	new_model.resize_token_embeddings(new_num_tokens=None, pad_to_multiple_of=8)
 	new_model.save_pretrained(f"{args.output}")
 	tokenizer = MBartTokenizer.from_pretrained(args.pretrained_model_from_hub)
 	tokenizer.save_pretrained(args.output)

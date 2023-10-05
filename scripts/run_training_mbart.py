@@ -46,6 +46,7 @@ from transformers import (
     Seq2SeqTrainingArguments,
     default_data_collator,
     set_seed,
+    EarlyStoppingCallback
 )
 from transformers.trainer_utils import get_last_checkpoint
 from transformers.utils import check_min_version, send_example_telemetry
@@ -421,9 +422,11 @@ def main():
     # We resize the embeddings only when necessary to avoid index errors. If you are creating a model from scratch
     # on a small vocab and want a smaller embedding size, remove this test.
     embedding_size = model.get_input_embeddings().weight.shape[0]
+    # logger.warning(embedding_size)
     if len(tokenizer) > embedding_size:
-        model.resize_token_embeddings(len(tokenizer))
-
+        model.resize_token_embeddings(len(tokenizer), pad_to_multiple_of=8)
+        # embedding_size = model.get_input_embeddings().weight.shape[0]
+        # logger.warning(embedding_size)
     # Set decoder_start_token_id
     if model.config.decoder_start_token_id is None and isinstance(tokenizer, (MBartTokenizer, MBartTokenizerFast)):
         if isinstance(tokenizer, MBartTokenizer):
@@ -597,7 +600,7 @@ def main():
         prediction_lens = [np.count_nonzero(pred != tokenizer.pad_token_id) for pred in preds]
         result["gen_len"] = np.mean(prediction_lens)
         result = {k: round(v, 4) for k, v in result.items()}
-        logger.critical(f"result: {result}")
+        # logger.critical(f"result: {result}")
         return result
 
     # Initialize our Trainer
@@ -609,6 +612,7 @@ def main():
         tokenizer=tokenizer,
         data_collator=data_collator,
         compute_metrics=compute_metrics if training_args.predict_with_generate else None,
+        callbacks = [EarlyStoppingCallback(early_stopping_patience = 3)]
     )
 
     # Training
