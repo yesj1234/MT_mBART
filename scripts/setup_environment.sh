@@ -19,14 +19,3 @@ pip install sentencepiece sacrebleu
 pip install -U protobuf
 pip install --upgrade protobuf
 
-# # fairseq installation
-# # cd ~ 
-# # git clone https://github.com/facebookresearch/fairseq.git
-# # cd fairseq
-# # pip install --editable ./
-
-# # download the base model for model pruning
-# cd ~ 
-# wget https://dl.fbaipublicfiles.com/fairseq/models/mbart/mbart.cc25.v2.tar.gz
-# tar -xvzf mbart.cc25.v2.tar.gz
-
