@@ -15,27 +15,6 @@ python $PREPARE_FROM_JSON_MT \
 --mt_dest_file /home/data \
 --jsons /home/data/
 
-python $CORPUS_GEN_FOR_MBART \
---splits $SPLITS_DIR \
---source_lang $SOURCE_LANG \
---target_lang $TARGET_LANG
-
-python $SPM_ENCODE \
---model /home/utils/sentence.bpe.model \
---inputs $SPLITS_DIR/train.ko $SPLITS_DIR/train.ja $SPLITS_DIR/test.ko $SPLITS_DIR/test.ja $SPLITS_DIR/validation.ko $SPLITS_DIR/validation.ja \
---outputs $SPLITS_DIR/train.spm.ko $SPLITS_DIR/train.spm.ja $SPLITS_DIR/test.spm.ko $SPLITS_DIR/test.spm.ja $SPLITS_DIR/validation.spm.ko $SPLITS_DIR/validation.spm.ja
-
-python $BUILD_VOCAB \
---corpus-data "$SPLITS_DIR/*.spm.*" \
---langs ar_AR,cs_CZ,de_DE,en_XX,es_XX,et_EE,fi_FI,fr_XX,gu_IN,hi_IN,it_IT,ja_XX,kk_KZ,ko_KR,lt_LT,lv_LV,my_MM,ne_NP,nl_XX,ro_RO,ru_RU,si_LK,tr_TR,vi_VN,zh_CN \
---output /home/scripts/ft/dict.txt
-
-python $PRUNE_MODEL \
---pre-dict /home/utils/dict.txt \
---ft-dict /home/scripts/ft/dict.txt \
---langs ar_AR,cs_CZ,de_DE,en_XX,es_XX,et_EE,fi_FI,fr_XX,gu_IN,hi_IN,it_IT,ja_XX,kk_KZ,ko_KR,lt_LT,lv_LV,my_MM,ne_NP,nl_XX,ro_RO,ru_RU,si_LK,tr_TR,vi_VN,zh_CN \
---output /home/scripts/reduced_model
-
 python $TSV_TO_JSON \
 --split_path $SPLITS_DIR \
 --source_lang $SOURCE_LANG \
