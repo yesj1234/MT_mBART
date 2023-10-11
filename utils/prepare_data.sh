@@ -2,12 +2,17 @@
 
 export PREPARE_FROM_JSON_MT=/home/ubuntu/MT_mBART/utils/1.prepare_from_json_mt.py
 export TSV_TO_JSON=/home/ubuntu/MT_mBART/utils/2.tsv_to_json.py
+export REFINE_DATA=/home/ubuntu/MT_mBART/utils/refine_data.py
 export SOURCE_LANG=ko
-export TARGET_LANG=zh
+export TARGET_LANG=ja
+export SPLITS_DIR=/home/ubuntu/data/
 
 python3 $PREPARE_FROM_JSON_MT \
 --mt_dest_file /home/ubuntu/data \
 --jsons /home/ubuntu/data/
+
+python3 $REFINE_DATA \
+--tsv_splits_dir /home/ubuntu/data/mt_split
 
 python3 $TSV_TO_JSON \
 --split_path $SPLITS_DIR \

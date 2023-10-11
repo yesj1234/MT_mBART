@@ -12,6 +12,7 @@ import argparse
 import numpy as np
 
 
+
 def get_neccesary_info(json_file):
     json_data = json.load(json_file)
     transcription = json_data["tc_text"]
@@ -20,8 +21,9 @@ def get_neccesary_info(json_file):
 
 
 def main(args):
+    np.random.seed(42) # for reproduciblitity
     os.makedirs(os.path.join(args.mt_dest_file, "mt_split"), exist_ok=True)
-    sound_file_transcriptions, sound_file_translations = [], []
+    transcription_translation_set = []
     for root, dir, files in os.walk(args.jsons):
         if files:
             print(f"json files from {os.path.join(root)}")
@@ -31,13 +33,14 @@ def main(args):
                     with open(os.path.join(root, file), "r", encoding="utf-8") as json_file:
                         transcription, translation = get_neccesary_info(
                             json_file)
-                        sound_file_transcriptions.append(transcription)
-                        sound_file_translations.append(translation)
-
+                        transcription_translation_set.append((transcription, translation))
+    np.random.shuffle(transcription_translation_set)    
+    transcriptions = list(map(lambda x:x[0], transcription_translation_set))
+    translations = list(map(lambda x:x[1], transcription_translation_set))
     transcription_train, transcription_validate, transcription_test = np.split(
-        sound_file_transcriptions, [int(len(sound_file_transcriptions)*0.8), int(len(sound_file_transcriptions)*0.9)])
-    translation_train, translation_validate, translation_test = np.split(sound_file_translations, [
-                                                                         int(len(sound_file_translations)*0.8), int(len(sound_file_translations)*0.9)])
+        transcriptions, [int(len(transcriptions)*0.8), int(len(transcriptions)*0.9)])
+    translation_train, translation_validate, translation_test = np.split(translations, [
+                                                                         int(len(translations)*0.8), int(len(translations)*0.9)])
 
     assert len(transcription_train) == len(
         translation_train), "train split 길이 안맞음."

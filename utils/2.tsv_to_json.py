@@ -9,7 +9,7 @@ def main(args):
     for root, _, files in os.walk(args.split_path):
         for file in files:
             split_name, ext = os.path.splitext(file)
-            if ext == ".tsv":
+            if ext == ".tsv" and "refined" in split_name:
                 # 2. generate json from the split.tsv
                 new_json = {}
                 rows = []
