@@ -30,8 +30,8 @@ e.g.
 python3 2.tsv_to_json.py --split_path ./mt_split --source_lang ko --target_lang en
 ```
 
-3. **_preparing the data for model pruning_**. [tackling OOM issue while training with GPU](https://github.com/facebookresearch/fairseq/issues/2120)
-
+3. ~~**_preparing the data for model pruning_**. [tackling OOM issue while training with GPU](https://github.com/facebookresearch/fairseq/issues/2120)~~
+   reducing the model size needs more research due to some errors not resolved yet.
    download the base model mbart.cc25.v2. the folder contains model.pt, dict.txt, sentence.bpe.model
 
    ```
