@@ -7,6 +7,7 @@ from .patterns import (
     FIRST_BRACKET_FROM_PAIR,
     BRACKET_DOUBLE_JA_ONLY
 )
+from .refine_ko import refine_ko
 import re 
 import logging
 import sys 
@@ -71,3 +72,10 @@ def refine_ja(line):
     line = bracket_pair(line)
     line = bracket_double(line)
     return line 
+
+
+def refine_ko_ja(line):
+    transcription, translation = line.split(" :: ")
+    transcription = refine_ko(transcription)
+    transcription = refine_ja(translation)
+    return transcription, translation

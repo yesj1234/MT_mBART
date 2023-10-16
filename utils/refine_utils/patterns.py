@@ -15,7 +15,7 @@ close_bracket = chr(65289)
 BRACKET_PAIR_ZH = re.compile(f"{open_bracket}.+?{close_bracket}{open_bracket}.+?{close_bracket}") # （这个）（这个） 모양의 패턴 , 嗯，我好像有点(摄像机)(camera)恐惧症。 모양의 패턴들로부터 앞의 것 만 선택하기 위함. 
 BRACKET_ZH = re.compile(f"[{open_bracket}{close_bracket}]") # （） char code 65288, 65289 괄호매칭
 BRACKET_ZH_FIRST_PART = re.compile(f"^{open_bracket}.+?{close_bracket}") # （.）（.） 중 첫번째 괄호 매칭
-
+BRACKET_PAIR_ZH_SLASH = re.compile(f"{open_bracket}[^\/]+{close_bracket}\/{open_bracket}[^\/{open_bracket}{close_bracket}]+{close_bracket}")
 
 ## 일본어
 bracket_ja = chr
