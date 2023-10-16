@@ -18,4 +18,4 @@ pip install --upgrade urllib3 requests
 pip install sentencepiece sacrebleu
 pip install -U protobuf
 pip install --upgrade protobuf
-
+pip install wandb
