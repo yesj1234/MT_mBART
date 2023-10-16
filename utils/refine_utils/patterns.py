@@ -15,6 +15,13 @@ close_bracket = chr(65289)
 BRACKET_PAIR_ZH = re.compile(f"{open_bracket}.+?{close_bracket}{open_bracket}.+?{close_bracket}") # （这个）（这个） 모양의 패턴 , 嗯，我好像有点(摄像机)(camera)恐惧症。 모양의 패턴들로부터 앞의 것 만 선택하기 위함. 
 BRACKET_ZH = re.compile(f"[{open_bracket}{close_bracket}]") # （） char code 65288, 65289 괄호매칭
 BRACKET_ZH_FIRST_PART = re.compile(f"^{open_bracket}.+?{close_bracket}") # （.）（.） 중 첫번째 괄호 매칭
-# BRACKET_PAIR_ZH = re.compile(f"\(.+?\)\(.+?\)") # （这个）（这个） 모양의 패턴 , 嗯，我好像有点(摄像机)(camera)恐惧症。 모양의 패턴들로부터 앞의 것 만 선택하기 위함. 
-# BRACKET_ZH = re.compile(f"[\(\)]") # （） char code 65288, 65289 괄호매칭
-# BRACKET_ZH_FIRST_PART = re.compile(f"^\(.+?\)") # （.）（.） 중 첫번째 괄호 매칭
+
+
+## 일본어
+bracket_ja = chr
+BRACKET_JA = re.compile("「.+?」")   # 「イソ」
+BRACKET_JA_ONLY = re.compile("[「」]") # 「」
+BRACKET_PAIR_JA = re.compile("\(.+?\)\(.+?\)") # 文字通りオム(エッセンス)(essence)男性向けの(エッセンス)(essence)を用意しております。
+BRACKET_PAIR_JA_ONLY = re.compile("[\(\)]")
+FIRST_BRACKET_FROM_PAIR = re.compile("\(.+?\)")
+BRACKET_DOUBLE_JA = re.compile("『.+?』")   # 『家族愛ウォーキング大会』
