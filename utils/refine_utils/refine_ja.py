@@ -4,7 +4,8 @@ from .patterns import (
     BRACKET_PAIR_JA, 
     BRACKET_DOUBLE_JA, 
     BRACKET_PAIR_JA_ONLY,
-    FIRST_BRACKET_FROM_PAIR
+    FIRST_BRACKET_FROM_PAIR,
+    BRACKET_DOUBLE_JA_ONLY
 )
 import re 
 import logging
@@ -50,7 +51,23 @@ def bracket_pair(line):
     else:
         return line
     
+def bracket_double(line): 
+    line = str(line)
+    matched = re.findall(BRACKET_DOUBLE_JA, line) # 『お酒モッパン』だけでもファンは喜びます。
+    if matched:
+        for item in matched:
+            item = str(item) # 『お酒モッパン』
+            logger.info(item)
+            word = re.sub(BRACKET_DOUBLE_JA_ONLY, "", item) # お酒モッパン
+            logger.info(word)
+            word = str(word)
+            line = line.replace(item, word) # お酒モッパンだけでもファンは喜びます。
+            logger.info(line)
+        return line
+    else:
+        return line
 def refine_ja(line):
     line = bracket(line)
     line = bracket_pair(line)
+    line = bracket_double(line)
     return line 
