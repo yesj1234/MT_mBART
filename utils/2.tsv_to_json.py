@@ -17,8 +17,14 @@ def main(args):
                     split = csv.reader(f, delimiter="\n")
                     for row in split:
                         if row:
-                            source_lang, target_lang = row[0].split(" :: ")
-                            rows.append({f"{args.source_lang}": source_lang, f"{args.target_lang}": target_lang})
+                            try:
+                                source_lang, target_lang = row[0].split(" :: ")
+                                rows.append({f"{args.source_lang}": source_lang, f"{args.target_lang}": target_lang})
+                            except Exception as e:
+                                print(e)
+                                print(file)
+                                # print(row)
+                                pass
                 new_json["translation"] = rows
                 #3. dump split.json
                 with open(os.path.join(root, f"{split_name}.json"), "w+", encoding="utf-8") as js:

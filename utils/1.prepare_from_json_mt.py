@@ -10,13 +10,15 @@ import json
 import os
 import argparse
 import numpy as np
-
+import re
 
 
 def get_neccesary_info(json_file):
     json_data = json.load(json_file)
     transcription = json_data["tc_text"]
+    transcription = re.sub("\n", " ", transcription)
     translation = json_data["tl_trans_text"]
+    translation = re.sub("\n", " ", translation)
     return transcription, translation
 
 
@@ -31,9 +33,13 @@ def main(args):
                 _, ext = os.path.splitext(file)
                 if ext == ".json":
                     with open(os.path.join(root, file), "r", encoding="utf-8") as json_file:
-                        transcription, translation = get_neccesary_info(
-                            json_file)
-                        transcription_translation_set.append((transcription, translation))
+                        try:
+                            transcription, translation = get_neccesary_info(
+                                json_file)
+                            transcription_translation_set.append((transcription, translation))
+                        except Exception as e:
+                            print(e)
+                            print(file)
     np.random.shuffle(transcription_translation_set)    
     transcriptions = list(map(lambda x:x[0], transcription_translation_set))
     translations = list(map(lambda x:x[1], transcription_translation_set))
@@ -41,7 +47,6 @@ def main(args):
         transcriptions, [int(len(transcriptions)*0.8), int(len(transcriptions)*0.9)])
     translation_train, translation_validate, translation_test = np.split(translations, [
                                                                          int(len(translations)*0.8), int(len(translations)*0.9)])
-
     assert len(transcription_train) == len(
         translation_train), "train split 길이 안맞음."
     assert len(transcription_test) == len(
