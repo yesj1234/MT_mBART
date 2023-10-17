@@ -3,6 +3,16 @@ import re
 import argparse 
 from refine_utils.refine_zh import refine_zh
 from refine_utils.refine_ko import refine_ko
+from refine_utils.refine_ja import refine_ja
+import logging
+import sys
+
+logger = logging.getLogger("REFINE_DATA")
+logger.setLevel(logging.INFO)
+streamhandler = logging.StreamHandler(sys.stdout)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+streamhandler.setFormatter(formatter)
+logger.addHandler(streamhandler)
 
 def main(args):
     for root, _dir, files in os.walk(args.tsv_splits_dir):
@@ -22,15 +32,32 @@ def main(args):
                                 translation = refine_zh(translation)
                                 new_lines.append(f"{transcription} :: {translation}")
                             except Exception as e:
-                                print(e)
-                                print(file)
-                                print(transcription)
-                                print(translation)
+                                logger.warning(e)
+                                logger.warning(file)
+                                logger.warning(transcription)
+                                logger.warning(translation)
                                 cnt += 1
                                 pass 
                         for l in new_lines:
                             refined_file.write(l) 
-                        print(cnt)   
+                        logger.info(cnt)  
+                    elif args.langs == "ko-ja":
+                        for line in lines:
+                            try: 
+                                transcription, translation = line.split(" :: ")
+                                transcription = refine_ko(transcription)
+                                translation = refine_ja(translation)
+                                new_lines.append(f"{transcription} :: {translation}")
+                            except Exception as e: 
+                                logger.warning(e)
+                                logger.warning(file)
+                                logger.warning(transcription)
+                                logger.warning(translation)
+                                cnt += 1
+                                pass 
+                        for l in new_lines:
+                            refined_file.write(l) 
+                        logger.info(cnt)
                         
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

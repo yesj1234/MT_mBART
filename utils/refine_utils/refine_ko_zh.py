@@ -1,4 +1,5 @@
 from .patterns import BRACKET_PAIR_ZH, BRACKET_ZH, BRACKET_ZH_FIRST_PART
+from .refine_ko import refine_ko
 import re 
 
 def refine_zh(line):
@@ -18,3 +19,9 @@ def refine_zh(line):
         return line
     else:
         return line
+    
+def refine_ko_zh(line):
+    transcription, translation = line.split(" :: ")
+    transcription = refine_ko(transcription)
+    translation = refine_zh(translation)
+    return transcription, translation
