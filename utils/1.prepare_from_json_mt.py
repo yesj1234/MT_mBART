@@ -11,7 +11,9 @@ import os
 import argparse
 import numpy as np
 import re
-
+import logging
+logger = logging.getLogger("splitting_logger")
+logger.setLevel(logging.INFO)
 
 def get_neccesary_info(json_file):
     json_data = json.load(json_file)
@@ -21,25 +23,53 @@ def get_neccesary_info(json_file):
     translation = re.sub("\n", " ", translation)
     return transcription, translation
 
+def get_pairs(dir_path, ratio = 1.0):
+    pairs = []
+    for root, dirs, files in os.walk(dir_path):
+        if dirs:
+            for dir in dirs:
+                logger.info(f"json files from {os.path.join(root, dir)}")
+                files = os.listdir(os.path.join(root, dir))
+                if files:
+                    for file in files:
+                        _, ext = os.path.splitext(file)
+                        if ext == ".json":
+                            with open(os.path.join(root, dir, file), "r", encoding="utf-8") as json_file:
+                                try:
+                                    transcription, translation = get_neccesary_info(
+                                        json_file)
+                                    pairs.append((transcription, translation))
+                                except Exception as e:
+                                    logger.warning(e)
+                                    logger.warning(file)
+    np.random.shuffle(pairs) # shuffle in-place and return none.
+    maximum_index = int(len(pairs) * ratio)
+    return pairs[:maximum_index] # return the given ratio. defaults to 100%.
+
+def split_data(pairs):
+    transcriptions = list(map(lambda x:x[0], pairs))
+    translations = list(map(lambda x:x[1], pairs))
+    transcription_train, transcription_validate, transcription_test = np.split(
+        transcriptions, [int(len(transcriptions)*0.8), int(len(transcriptions)*0.9)])
+    translation_train, translation_validate, translation_test = np.split(translations, [
+                                                                         int(len(translations)*0.8), int(len(translations)*0.9)])
+    assert len(transcription_train) == len(
+        translation_train), "train split 길이 안맞음."
+    assert len(transcription_test) == len(
+        translation_test), "test split 길이 안맞음."
+    assert len(transcription_validate) == len(
+        translation_validate), "validate split 길이 안맞음."
+    return transcription_train, transcription_validate, transcription_test, translation_train, translation_validate, translation_test
 
 def main(args):
     np.random.seed(42) # for reproduciblitity
     os.makedirs(os.path.join(args.mt_dest_file, "mt_split"), exist_ok=True)
+    categories_list = os.listdir(args.jsons) # ["게임_ca3", "교육_ca5", ...] , args.jsons = "/home/ubuntu/한국어_영어/'라벨링 데이터'"
+    categories_list = list(map(lambda x: os.path.join(args.jsons, x), categories_list))
     transcription_translation_set = []
-    for root, dir, files in os.walk(args.jsons):
-        if files:
-            print(f"json files from {os.path.join(root)}")
-            for file in files:
-                _, ext = os.path.splitext(file)
-                if ext == ".json":
-                    with open(os.path.join(root, file), "r", encoding="utf-8") as json_file:
-                        try:
-                            transcription, translation = get_neccesary_info(
-                                json_file)
-                            transcription_translation_set.append((transcription, translation))
-                        except Exception as e:
-                            print(e)
-                            print(file)
+    for category_path in categories_list:
+        pairs = get_pairs(category_path, ratio = args.ratio)
+        transcription_translation_set = [*transcription_translation_set, *pairs]   
     np.random.shuffle(transcription_translation_set)    
     transcriptions = list(map(lambda x:x[0], transcription_translation_set))
     translations = list(map(lambda x:x[1], transcription_translation_set))
@@ -53,7 +83,8 @@ def main(args):
         translation_test), "test split 길이 안맞음."
     assert len(transcription_validate) == len(
         translation_validate), "validate split 길이 안맞음."
- 
+    transcription_train, transcription_validate, transcription_test, translation_train, translation_validate, translation_test = split_data(transcription_translation_set)
+    
     with open(f"{os.path.join(args.mt_dest_file, 'mt_split', 'train.tsv')}", "a+", encoding="utf-8") as mt_train, \
             open(f"{os.path.join(args.mt_dest_file, 'mt_split','test.tsv')}", "a+", encoding="utf-8") as mt_test, \
             open(f"{os.path.join(args.mt_dest_file, 'mt_split','validation.tsv')}", "a+", encoding="utf-8") as mt_validate:
@@ -74,6 +105,7 @@ if __name__ == "__main__":
                         help="folder that will contain all the data for mt model")
     parser.add_argument("--jsons", type=str, required=True,
                         help="folder path that has json files inside of it")
+    parser.add_argument("--ratio", type=float, help="ratio of the data to make splits defaults to 1", default = 1.0)
     args = parser.parse_args()
     main(args)
 
