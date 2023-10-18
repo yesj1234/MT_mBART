@@ -571,7 +571,8 @@ def main():
 
     # Metric
     metric = evaluate.load("sacrebleu")
-
+    metric_3gram = evaluate.load("sacrebleu")
+    
     def postprocess_text(preds, labels):
         preds = [pred.strip() for pred in preds]
         labels = [[label.strip()] for label in labels]
@@ -594,6 +595,9 @@ def main():
         # for pred, label in zip(decoded_preds, decoded_labels):
         #     logger.critical(f"predicition: {decoded_preds}")
         #     logger.critical(f"reference  : {decoded_labels[0]}")
+        
+        result_3gram = metric_3gram.compute(predictions=decoded_preds, references=decoded_labels)
+        logger.info({k: round(v, 4) for k, v in result_3gram.items()})
         
         result = metric.compute(predictions=decoded_preds, references=decoded_labels)
         result = {"bleu": result["score"]}
