@@ -15,11 +15,7 @@ sudo apt install -y python3-pip
 pip install transformers datasets torch torchaudio numpy evaluate fairseq
 pip install -U accelerate 
 pip install --upgrade urllib3 requests
-pip install sentencepiece sacrebleu
+pip install sentencepiece sacrebleu "sacrebleu[ja]" "sacrebleu[ko]"
 pip install -U protobuf
 pip install --upgrade protobuf
 pip install wandb
-<<<<<<< HEAD
-
-=======
->>>>>>> aa570c4cff898b9b626fdcbc9e9254a3cba7bc62

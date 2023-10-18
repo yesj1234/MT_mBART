@@ -570,8 +570,10 @@ def main():
         )
 
     # Metric
+    metric_bleu = evaluate.load("bleu")
     metric = evaluate.load("sacrebleu")
-
+    metric_3gram = evaluate.load("sacrebleu")
+    
     def postprocess_text(preds, labels):
         preds = [pred.strip() for pred in preds]
         labels = [[label.strip()] for label in labels]
@@ -595,6 +597,15 @@ def main():
         #     logger.critical(f"predicition: {decoded_preds}")
         #     logger.critical(f"reference  : {decoded_labels[0]}")
         
+        ## 3gram bleu with "sacrebleu"
+        result_3gram = metric_3gram.compute(predictions=decoded_preds, references=decoded_labels, max_ngram_order = 3)
+        logger.info({k: round(v, 4) for k, v in result_bleu.items()})
+        
+        ## 4gram bleu with "bleu"
+        result_bleu = metric_bleu.compute(predictions=decoded_preds, references=decoded_labels)
+        logger.info({k: round(v, 4) for k, v in result_bleu.items()})
+        
+        ## 4gram bleu with "sacrebleu"
         result = metric.compute(predictions=decoded_preds, references=decoded_labels)
         result = {"bleu": result["score"]}
         prediction_lens = [np.count_nonzero(pred != tokenizer.pad_token_id) for pred in preds]
