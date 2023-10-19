@@ -16,7 +16,7 @@ python3 $REFINE_DATA \
 --tsv_splits_dir /home/ubuntu/'한국어(KO)_영어(EN)'/mt_split \
 --langs ko-en
 
-python3 $TSV_TO_JSON \
---split_path $SPLITS_DIR \
---source_lang $SOURCE_LANG \
---target_lang $TARGET_LANG
+# python3 $TSV_TO_JSON \
+# --split_path $SPLITS_DIR \
+# --source_lang $SOURCE_LANG \
+# --target_lang $TARGET_LANG
