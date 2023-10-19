@@ -63,10 +63,11 @@ fh_formatter = logging.Formatter(
     fmt = '%(asctime)s|%(name)s|%(message)s',
     datefmt = '%Y-%m-%d %H:%M:%S'
 )
+prediction_logger = logging.getLogger("prediction_logger")
 file_handler = logging.FileHandler("model_predictions.log")
 file_handler.setFormatter(fh_formatter)
 file_handler.setLevel(logging.CRITICAL)
-logger.addHandler(file_handler)
+prediction_logger.addHandler(file_handler)
 
 # A list of all multilingual tokenizer which require src_lang and tgt_lang attributes.
 MULTILINGUAL_TOKENIZERS = [MBartTokenizer, MBartTokenizerFast, MBart50Tokenizer, MBart50TokenizerFast, M2M100Tokenizer]
@@ -598,13 +599,13 @@ def main():
         #     logger.critical(f"reference  : {decoded_labels[0]}")
         
         ## 3gram bleu with "sacrebleu"
-        result_3gram = metric_3gram.compute(predictions=decoded_preds, references=decoded_labels, max_ngram_order = 3)
-        logger.info({k: round(v, 4) for k, v in result_bleu.items()})
+        # result_3gram = metric_3gram.compute(predictions=decoded_preds, references=decoded_labels, max_ngram_order = 3)
+        # logger.info({k: round(v, 4) for k, v in result_bleu.items()})
         
         ## 4gram bleu with "bleu"
-        result_bleu = metric_bleu.compute(predictions=decoded_preds, references=decoded_labels)
-        logger.info({k: round(v, 4) for k, v in result_bleu.items()})
-        
+        # result_bleu = metric_bleu.compute(predictions=decoded_preds, references=decoded_labels)
+        # logger.info({k: round(v, 4) for k, v in result_bleu.items()})
+        prediction_logger.critical(decoded_preds)
         ## 4gram bleu with "sacrebleu"
         result = metric.compute(predictions=decoded_preds, references=decoded_labels)
         result = {"bleu": result["score"]}

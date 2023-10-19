@@ -10,13 +10,13 @@ export SPLITS_DIR=/home/ubuntu/'한국어(KO)_영어(EN)'/mt_split
 python3 $PREPARE_FROM_JSON_MT \
 --mt_dest_file /home/ubuntu/'한국어(KO)_영어(EN)' \
 --jsons /home/ubuntu/'한국어(KO)_영어(EN)'/ \
---ratio 0.05
+--ratio 0.5
 
 python3 $REFINE_DATA \
 --tsv_splits_dir /home/ubuntu/'한국어(KO)_영어(EN)'/mt_split \
 --langs "${SOURCE_LANG}_${TARGET_LANG}"
 
-# python3 $TSV_TO_JSON \
-# --split_path $SPLITS_DIR \
-# --source_lang $SOURCE_LANG \
-# --target_lang $TARGET_LANG
+python3 $TSV_TO_JSON \
+--split_path $SPLITS_DIR \
+--source_lang $SOURCE_LANG \
+--target_lang $TARGET_LANG

@@ -3,7 +3,7 @@
     "source_lang": "ko_KR",
     "target_lang": "en_XX",
     "pad_to_max_length": true,
-    "output_dir": "./ko-en_mbartLarge_exp10p",
+    "output_dir": "./ko-en_mbartLarge_exp15p",
     "per_device_train_batch_size": 4,
     "per_device_eval_batch_size": 4,
     "gradient_accumulation_steps": 2,
@@ -31,5 +31,5 @@
     "forced_bos_token": "en_XX",
     "use_fast_tokenizer": true,
     "report_to": "wandb",
-    "run_name": "ko-en_mbartLarge_exp10p"
+    "run_name": "ko-en_mbartLarge_mid3"
 }
