@@ -14,7 +14,7 @@ python3 $PREPARE_FROM_JSON_MT \
 
 python3 $REFINE_DATA \
 --tsv_splits_dir /home/ubuntu/'한국어(KO)_영어(EN)'/mt_split \
---langs ko-en
+--langs "${SOURCE_LANG}_${TARGET_LANG}"
 
 # python3 $TSV_TO_JSON \
 # --split_path $SPLITS_DIR \

@@ -26,4 +26,8 @@ BRACKET_PAIR_JA_ONLY = re.compile("[\(\)]")
 FIRST_BRACKET_FROM_PAIR = re.compile("\(.+?\)")
 BRACKET_DOUBLE_JA = re.compile("『.+?』")   # 『家族愛ウォーキング大会』
 BRACKET_DOUBLE_JA_ONLY = re.compile("[『』]") # matching 『』
- 
+
+
+##영어
+BRACKET_PAIR_EN = re.compile("\(.+?\)\(.+?\)") # (head)(head)
+BRACKET_PAIR_EN_ONLY = re.compile("[\(\)]")

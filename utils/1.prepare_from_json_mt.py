@@ -14,6 +14,8 @@ import re
 import logging
 logger = logging.getLogger("splitting_logger")
 logger.setLevel(logging.INFO)
+streamHandler = logging.StreamHandler()
+logger.addHandler(streamHandler)
 
 def get_neccesary_info(json_file):
     json_data = json.load(json_file)
