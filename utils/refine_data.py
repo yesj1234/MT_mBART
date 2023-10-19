@@ -1,9 +1,14 @@
 import os 
 import re 
 import argparse 
-from refine_utils.refine_zh import refine_zh
-from refine_utils.refine_ko import refine_ko
-from refine_utils.refine_ja import refine_ja
+from refine_utils import (
+    refine_ko_en,
+    refine_ko_ja,
+    refine_ko_zh,
+    refine_en_ko,
+    refine_ja_ko,
+    refine_zh_ko
+)
 import logging
 import sys
 
@@ -14,6 +19,15 @@ formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(messag
 streamhandler.setFormatter(formatter)
 logger.addHandler(streamhandler)
 
+langs_mapper ={
+    "ko_zh": refine_ko_zh,
+    "ko_ja": refine_ko_ja,
+    "ko_en": refine_ko_en,
+    "en_ko": refine_en_ko,
+    "ja_ko": refine_ja_ko,
+    "zh_ko": refine_zh_ko
+}
+
 def main(args):
     for root, _dir, files in os.walk(args.tsv_splits_dir):
         for file in files:
@@ -23,41 +37,21 @@ def main(args):
                     lines = original_file.readlines()
                     new_lines = []
                     cnt = 0
-                    if args.langs == "ko-zh":
                         # ()/() 모양 패턴 제거
-                        for line in lines: 
-                            try:
-                                transcription, translation = line.split(" :: ")
-                                transcription = refine_ko(transcription)
-                                translation = refine_zh(translation)
-                                new_lines.append(f"{transcription} :: {translation}")
-                            except Exception as e:
-                                logger.warning(e)
-                                logger.warning(file)
-                                logger.warning(transcription)
-                                logger.warning(translation)
-                                cnt += 1
-                                pass 
-                        for l in new_lines:
-                            refined_file.write(l) 
-                        logger.info(cnt)  
-                    elif args.langs == "ko-ja":
-                        for line in lines:
-                            try: 
-                                transcription, translation = line.split(" :: ")
-                                transcription = refine_ko(transcription)
-                                translation = refine_ja(translation)
-                                new_lines.append(f"{transcription} :: {translation}")
-                            except Exception as e: 
-                                logger.warning(e)
-                                logger.warning(file)
-                                logger.warning(transcription)
-                                logger.warning(translation)
-                                cnt += 1
-                                pass 
-                        for l in new_lines:
-                            refined_file.write(l) 
-                        logger.info(cnt)
+                    for line in lines: 
+                        try:
+                            transcription, translation = langs_mapper[args.langs](line)
+                            new_lines.append(f"{transcription} :: {translation}")
+                        except Exception as e:
+                            logger.warning(e)
+                            logger.warning(file)
+                            logger.warning(transcription)
+                            logger.warning(translation)
+                            cnt += 1
+                            pass 
+                    for l in new_lines:
+                        refined_file.write(l) 
+                    logger.info(cnt)  
                         
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
