@@ -24,6 +24,7 @@ import sys
 import warnings
 from dataclasses import dataclass, field
 from typing import Optional
+import math
 
 import datasets
 import evaluate
@@ -64,7 +65,7 @@ fh_formatter = logging.Formatter(
     datefmt = '%Y-%m-%d %H:%M:%S'
 )
 prediction_logger = logging.getLogger("prediction_logger")
-file_handler = logging.FileHandler("model_predictions.log")
+file_handler = logging.FileHandler("model_predictions_exp15.log")
 file_handler.setFormatter(fh_formatter)
 file_handler.setLevel(logging.CRITICAL)
 prediction_logger.addHandler(file_handler)
@@ -597,17 +598,16 @@ def main():
         # for pred, label in zip(decoded_preds, decoded_labels):
         #     logger.critical(f"predicition: {decoded_preds}")
         #     logger.critical(f"reference  : {decoded_labels[0]}")
+        def my_log(num):
+            if num == 0.0:
+                return -9999999999
+            return math.log(num)
         
-        ## 3gram bleu with "sacrebleu"
-        # result_3gram = metric_3gram.compute(predictions=decoded_preds, references=decoded_labels, max_ngram_order = 3)
-        # logger.info({k: round(v, 4) for k, v in result_bleu.items()})
-        
-        ## 4gram bleu with "bleu"
-        # result_bleu = metric_bleu.compute(predictions=decoded_preds, references=decoded_labels)
-        # logger.info({k: round(v, 4) for k, v in result_bleu.items()})
-        prediction_logger.critical(decoded_preds)
-        ## 4gram bleu with "sacrebleu"
         result = metric.compute(predictions=decoded_preds, references=decoded_labels)
+        bp = result["bp"]    
+        precisions = result["precisions"]
+        gram_3 = bp * math.exp(sum([my_log(p) for p in precisions[:3]]) / 3)
+        result["3gram"] = gram_3
         result = {"bleu": result["score"]}
         prediction_lens = [np.count_nonzero(pred != tokenizer.pad_token_id) for pred in preds]
         result["gen_len"] = np.mean(prediction_lens)
