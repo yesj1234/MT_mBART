@@ -45,8 +45,6 @@ def main(args):
                         except Exception as e:
                             logger.warning(e)
                             logger.warning(file)
-                            logger.warning(transcription)
-                            logger.warning(translation)
                             cnt += 1
                             pass 
                     for l in new_lines:
