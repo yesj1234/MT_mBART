@@ -20,16 +20,12 @@ def refine_ko(line):
             except Exception as e:
                 print(e)
                 pass
-    else:
-        pass
     
     matched = re.findall(BRACKET_EX, line) # 뭣뭣/(무엇무엇)
     if matched:
         for item in matched:
             first_part = item.split("/")[1] # 무엇무엇 선택 
             line = line.replace(item, first_part) # 뭣뭣/(뭐뭐) -> 무엇무엇
-    else:
-        pass
     
     matched = re.findall(BRACKET_PAIR_KO_FAKE, line) # (로제)/(rose)
     if matched:
@@ -67,5 +63,5 @@ def refine_ko(line):
             except Exception as e:
                 print(e)
                 pass
-    
+        return line
     return line 

@@ -25,11 +25,11 @@ def bracket(line):
     if matched:
         for item in matched:
             item = str(item) # 「イソ」
-            logger.info(item)
+            # logger.info(item)
             word = re.sub(BRACKET_JA_ONLY, "", item) # イソ
             word = str(word)
             line = line.replace(item, word) # 「イソ」を置いて、「イソ」を置いて「スンデクッパ」を食べに行きます。-> イソを置いて、「イソ」を置いて「スンデクッパ」を食べに行きます。
-            logger.info(line)
+            # logger.info(line)
         return line
     else:
         return line
@@ -40,14 +40,14 @@ def bracket_pair(line):
     if matched:
         for item in matched:
             item = str(item) # (エッセンス)(essence)
-            logger.info(item)
+            # logger.info(item)
             word = re.match(FIRST_BRACKET_FROM_PAIR, item)[0] # (エッセンス)
             # logger.info(word)
             word = re.sub(BRACKET_PAIR_JA_ONLY, "", word) # エッセンス
             # logger.info(word)
             word = str(word)
             line = line.replace(item, word) # 文字通りオム(エッセンス)(essence)男性向けの(エッセンス)(essence)を用意しております。。 -> 文字通りオムエッセンス男性向けのエッセンスを用意しております。。
-            logger.info(line)
+            # logger.info(line)
         return line
     else:
         return line
@@ -58,12 +58,12 @@ def bracket_double(line):
     if matched:
         for item in matched:
             item = str(item) # 『お酒モッパン』
-            logger.info(item)
+            # logger.info(item)
             word = re.sub(BRACKET_DOUBLE_JA_ONLY, "", item) # お酒モッパン
-            logger.info(word)
+            # logger.info(word)
             word = str(word)
             line = line.replace(item, word) # お酒モッパンだけでもファンは喜びます。
-            logger.info(line)
+            # logger.info(line)
         return line
     else:
         return line
@@ -77,5 +77,5 @@ def refine_ja(line):
 def refine_ko_ja(line):
     transcription, translation = line.split(" :: ")
     transcription = refine_ko(transcription)
-    transcription = refine_ja(translation)
+    translation = refine_ja(translation)
     return transcription, translation
