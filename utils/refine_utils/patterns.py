@@ -1,7 +1,8 @@
 import re
 
 ## 한국어
-BRACKET_PAIR_KO = re.compile("\([^\/]+\)\/\([^\/\(\)]+\)") # 1. (이거)/(요거) 모양 패턴
+BRACKET_PAIR_KO_PRONOUNCE = re.compile("\(.+?\)\/\(.[^a-zA-Z]+?\)") # 1. (이거)/(요거) 모양 패턴
+BRACKET_PAIR_KO_FAKE = re.compile("\(.+?\)\/\(.[a-zA-Z]+?\)") # 1. (로제)/(rose) 모양 패턴
 BRACKET_KO = re.compile("[\(\)]") # 2. (문자) 모양 패턴
 BRACKET_EX = re.compile("\/\([^\/]+\)") # 뭣뭣/(무엇무엇) 모양 패턴
 SPECIAL_CHARS_FOR_KO = re.compile("[a-z,?!%'~:/+\-*().·@]") # 한글 이외의 특수 기호들 [a-z,?!%'~:/+\-*().·@] 패턴 
@@ -16,6 +17,11 @@ BRACKET_PAIR_ZH = re.compile(f"{open_bracket}.+?{close_bracket}{open_bracket}.+?
 BRACKET_ZH = re.compile(f"[{open_bracket}{close_bracket}]") # （） char code 65288, 65289 괄호매칭
 BRACKET_ZH_FIRST_PART = re.compile(f"^{open_bracket}.+?{close_bracket}") # （.）（.） 중 첫번째 괄호 매칭
 BRACKET_PAIR_ZH_SLASH = re.compile(f"{open_bracket}[^\/]+{close_bracket}\/{open_bracket}[^\/{open_bracket}{close_bracket}]+{close_bracket}")
+BRACKET_PAIR_ZH_FAKE = re.compile(f"{open_bracket}.+?{close_bracket}{open_bracket}.[a-zA-Z]+?\)")
+
+
+
+
 
 ## 일본어
 bracket_ja = chr

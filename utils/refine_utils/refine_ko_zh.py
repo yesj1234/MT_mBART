@@ -9,7 +9,7 @@ def refine_zh(line):
         for item in matched:
             item = str(item)
             print(item)
-            first_part = re.match(BRACKET_ZH_FIRST_PART, item)[0] # （这个）
+            first_part = re.match(BRACKET_ZH_FIRST_PART, item)[1] # （这个）
             first_part = str(first_part)
             print(first_part)
             first_part = re.sub(BRACKET_ZH, "", first_part) # 这个

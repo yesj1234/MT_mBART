@@ -1,5 +1,5 @@
 import re
-from .patterns import BRACKET_PAIR_ZH_SLASH, BRACKET_ZH
+from .patterns import BRACKET_PAIR_ZH_SLASH, BRACKET_ZH, BRACKET_KO
 
 def refine_ko(line):
     return line    
