@@ -7,7 +7,7 @@ close_bracket = chr(65289)
 
 ####### 한국어 #######
 BRACKET_PAIR_KO_PRONOUNCE = re.compile("\(\s*?[^a-zA-Z]+?\s*?\)\s*?\/\s*?\(\s*?[^a-zA-Z]+?\s*?\)") # 1. (그래가지고)/(그래서) 혹은 (고것도)/(그것도)
-BRACKET_PAIR_KO_FAKE = re.compile("\(\s*?[ㄱ-ㅎㅏ-ㅣ가-힣]+?\s*?\)\s*?\/\(\s*?[a-zA-Z]+?\s*?\)") # 1. (로제)/(rose) 모양 패턴
+BRACKET_PAIR_KO_FAKE = re.compile("\([\sㄱ-ㅎㅏ-ㅣ가-힣]+?\)\s*?\/\s*?\([\sa-zA-Z]+?\)") # 1. (로제)/(rose) 모양 패턴
 BRACKET_KO_FAKE = re.compile("[ㄱ-ㅎ가-힣ㅏ-ㅣ]+?\s*?\(\s*?[a-zA-Z]+?\s*?\)") # 로제(rose)
 BRACKET_KO = re.compile("[\(\)]") # 2. (문자) 에서 () 를 지우기 위한 패턴
 
@@ -33,16 +33,15 @@ BRACKET_PAIR_ZH_FAKE = re.compile(f"[\({open_bracket}].+?[\){close_bracket}][\({
 
 
 ###### 일본어 ######
-BRACKET_JA = re.compile("「.+?」")   # 「イソ」
-BRACKET_JA_ONLY = re.compile("[「」]") # 「」
+BRACKET_RIGHT_ANGLE_JA = re.compile("[\「\」\『\』]")   # 「」,『』 PATTERN. Simply remove the symbol.
 
-BRACKET_PAIR_JA = re.compile("\(.+?\)\(.+?\)") # 文字通りオム(エッセンス)(essence)男性向けの(エッセンス)(essence)を用意しております。
+BRACKET_PAIR_JA = re.compile("\(\s*?.+?\s*?\)\s*?\(\s*?[a-zA-Z.\?\']+?\s*?\)") # 文字通りオム(エッセンス)(essence)男性向けの(エッセンス)(essence)を用意しております。
 BRACKET_PAIR_JA_ONLY = re.compile("[\(\)]")
 FIRST_BRACKET_FROM_PAIR = re.compile("\(.+?\)")
-BRACKET_DOUBLE_JA = re.compile("『.+?』")   # 『家族愛ウォーキング大会』
-BRACKET_DOUBLE_JA_ONLY = re.compile("[『』]") # matching 『』
-# （ソース）（Source）/ (リトル)(little)
-# 「ダック」
+
+BRACKET_PAIR_SECOND_JA = re.compile(f"[\({open_bracket}]\s*?([^a-zA-Z\({open_bracket}]+?)\s*?[\){close_bracket}]\s*?[\({open_bracket}]\s*?([^a-zA-Z]+?)\s*?[\){close_bracket}]")
+
+
 # (これ)(これ) / (そのように)(そのように) 
 # (私が)(本当に) / (大目に見ると)(足を踏み入れたら) 
 

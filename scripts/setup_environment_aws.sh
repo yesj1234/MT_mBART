@@ -8,14 +8,14 @@ sudo dpkg -i cuda-keyring_1.1-1_all.deb
 sudo apt-get update 
 sudo apt-get install -y cuda
 
-# # 3. install pip
-# sudo apt install -y python3-pip 
+# 3. install pip
+sudo apt install -y python3-pip 
 
-# # 4. install python libraries 
-# pip install transformers datasets torch torchaudio numpy evaluate fairseq
-# pip install -U accelerate 
-# pip install --upgrade urllib3 requests
-# pip install sentencepiece sacrebleu "sacrebleu[ja]" "sacrebleu[ko]"
-# pip install -U protobuf
-# pip install --upgrade protobuf
-# pip install wandb
+# 4. install python libraries 
+pip install transformers datasets torch torchaudio numpy evaluate fairseq
+pip install -U accelerate 
+pip install --upgrade urllib3 requests
+pip install sentencepiece sacrebleu "sacrebleu[ja]" "sacrebleu[ko]"
+pip install -U protobuf
+pip install --upgrade protobuf
+pip install wandb
