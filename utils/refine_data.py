@@ -54,6 +54,6 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--tsv_splits_dir", help="asr_splits 디렉토리 경로")
-    parser.add_argument("--langs", help="ko-en, ko-ja, ko-zh, en-ko, ja-ko, zh-ko")
+    parser.add_argument("--langs", help="ko_en, ko_ja, ko_zh, en_ko, ja_ko, zh_ko")
     args = parser.parse_args()
     main(args)

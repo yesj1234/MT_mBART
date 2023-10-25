@@ -1,11 +1,9 @@
 from .patterns import (
-    BRACKET_JA, 
-    BRACKET_JA_ONLY, 
     BRACKET_PAIR_JA, 
-    BRACKET_DOUBLE_JA, 
     BRACKET_PAIR_JA_ONLY,
     FIRST_BRACKET_FROM_PAIR,
-    BRACKET_DOUBLE_JA_ONLY
+    BRACKET_RIGHT_ANGLE_JA,
+    BRACKET_PAIR_SECOND_JA
 )
 from .refine_ko import refine_ko
 import re 
@@ -19,23 +17,17 @@ streamhandler.setFormatter(formatter)
 logger.addHandler(streamhandler)
 
 
-def bracket(line):
-    line = str(line)
-    matched = re.findall(BRACKET_JA, line) # 「イソ」を置いて、「イソ」を置いて「スンデクッパ」を食べに行きます。
+
+
+def bracket_right_angle(line):
+    matched = re.findall(BRACKET_RIGHT_ANGLE_JA, line)
     if matched:
         for item in matched:
-            item = str(item) # 「イソ」
-            # logger.info(item)
-            word = re.sub(BRACKET_JA_ONLY, "", item) # イソ
-            word = str(word)
-            line = line.replace(item, word) # 「イソ」を置いて、「イソ」を置いて「スンデクッパ」を食べに行きます。-> イソを置いて、「イソ」を置いて「スンデクッパ」を食べに行きます。
-            # logger.info(line)
+            line = line.replace(item, "")
         return line
-    else:
-        return line
+    return line 
     
 def bracket_pair(line):
-    line = str(line)
     matched = re.findall(BRACKET_PAIR_JA, line) # 文字通りオム(エッセンス)(essence)男性向けの(エッセンス)(essence)を用意しております。。
     if matched:
         for item in matched:
@@ -51,31 +43,31 @@ def bracket_pair(line):
         return line
     else:
         return line
-    
-def bracket_double(line): 
-    line = str(line)
-    matched = re.findall(BRACKET_DOUBLE_JA, line) # 『お酒モッパン』だけでもファンは喜びます。
+
+def bracket_pair_second(line):
+    matched = re.findall(BRACKET_PAIR_SECOND_JA, line) # (これ)(これ) 혹은 (私が)(本当に) 같거나 다르거나 둘다 2번째 캡처 그룹을 사용할 것.
     if matched:
         for item in matched:
-            item = str(item) # 『お酒モッパン』
-            # logger.info(item)
-            word = re.sub(BRACKET_DOUBLE_JA_ONLY, "", item) # お酒モッパン
-            # logger.info(word)
-            word = str(word)
-            line = line.replace(item, word) # お酒モッパンだけでもファンは喜びます。
-            # logger.info(line)
-        return line
-    else:
-        return line
+            try:
+                # print(f"line: {line}")
+                _, second_one = item
+                # print(f"second_one: {second_one}")
+                target = re.search(BRACKET_PAIR_SECOND_JA, line).group()
+                # print(f"target: {target}")
+                line = line.replace(target, second_one)
+            except Exception as e:
+                pass
+    return line 
+        
 def refine_ja(line):
-    line = bracket(line)
+    line = bracket_right_angle(line)
     line = bracket_pair(line)
-    line = bracket_double(line)
+    line = bracket_pair_second(line)
     return line 
 
 
 def refine_ko_ja(line):
     transcription, translation = line.split(" :: ")
-    transcription = refine_ko(transcription)
-    translation = refine_ja(translation)
+    transcription = refine_ko(str(transcription))
+    translation = refine_ja(str(translation))
     return transcription, translation

@@ -5,7 +5,9 @@ from .patterns import (
     BRACKET_PAIR_KO_FAKE,
     BRACKET_PAIR_KO_PRONOUNCE_NO_SLASH,
     BRACKET_PAIR_KO_FAKE_NO_SLASH,
-    BRACKET_WORD_PICKING
+    BRACKET_WORD_PICKING,
+    BRACKET_KO_FAKE,
+    SPECIAL_CHARS_FOR_KO
 )
 import re
 
@@ -63,5 +65,25 @@ def refine_ko(line):
             except Exception as e:
                 print(e)
                 pass
-        return line
+    
+    matched = re.findall(BRACKET_KO_FAKE, line) # 로제(rose)
+    if matched:
+        for item in matched:
+            try:
+                # print(item)
+                selected_word = item.split("(")[0]
+                # print(f"selected_word: {selected_word}")
+                line = line.replace(item, selected_word)
+            except Exception as e:
+                print(e)
+                pass
+    
+    matched = re.findall(SPECIAL_CHARS_FOR_KO, line)
+    if matched:
+        for item in matched:
+            try:
+                line = line.replace(item, "")
+            except Exception as e:
+                print(e)
+                pass 
     return line 
