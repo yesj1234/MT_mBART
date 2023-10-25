@@ -33,15 +33,18 @@ BRACKET_PAIR_ZH_FAKE = re.compile(f"[\({open_bracket}].+?[\){close_bracket}][\({
 
 
 ###### 일본어 ######
-bracket_ja = chr
 BRACKET_JA = re.compile("「.+?」")   # 「イソ」
 BRACKET_JA_ONLY = re.compile("[「」]") # 「」
+
 BRACKET_PAIR_JA = re.compile("\(.+?\)\(.+?\)") # 文字通りオム(エッセンス)(essence)男性向けの(エッセンス)(essence)を用意しております。
 BRACKET_PAIR_JA_ONLY = re.compile("[\(\)]")
 FIRST_BRACKET_FROM_PAIR = re.compile("\(.+?\)")
 BRACKET_DOUBLE_JA = re.compile("『.+?』")   # 『家族愛ウォーキング大会』
 BRACKET_DOUBLE_JA_ONLY = re.compile("[『』]") # matching 『』
-
+# （ソース）（Source）/ (リトル)(little)
+# 「ダック」
+# (これ)(これ) / (そのように)(そのように) 
+# (私が)(本当に) / (大目に見ると)(足を踏み入れたら) 
 
 ##영어
 BRACKET_PAIR_EN = re.compile("\(\s*?.+?\s*?\)\s*?\(\s*?.+?\s*?\)") # (head)(head)
