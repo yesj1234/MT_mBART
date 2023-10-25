@@ -6,8 +6,9 @@ open_bracket = chr(65288)
 close_bracket = chr(65289)
 
 ####### 한국어 #######
-BRACKET_PAIR_KO_PRONOUNCE = re.compile("\(.+?\)\s?\/\s?\(.[^a-zA-Z]+?\)") # 1. (그래가지고)/(그래서) 혹은 (고것도)/(그것도)
-BRACKET_PAIR_KO_FAKE = re.compile("\(.+?\)\/\(.[a-zA-Z\s]+?\)") # 1. (로제)/(rose) 모양 패턴
+BRACKET_PAIR_KO_PRONOUNCE = re.compile("\(\s*?[^a-zA-Z]+?\s*?\)\s*?\/\s*?\(\s*?[^a-zA-Z]+?\s*?\)") # 1. (그래가지고)/(그래서) 혹은 (고것도)/(그것도)
+BRACKET_PAIR_KO_FAKE = re.compile("\(\s*?[ㄱ-ㅎㅏ-ㅣ가-힣]+?\s*?\)\s*?\/\(\s*?[a-zA-Z]+?\s*?\)") # 1. (로제)/(rose) 모양 패턴
+BRACKET_KO_FAKE = re.compile("[ㄱ-ㅎ가-힣ㅏ-ㅣ]+?\s*?\(\s*?[a-zA-Z]+?\s*?\)") # 로제(rose)
 BRACKET_KO = re.compile("[\(\)]") # 2. (문자) 에서 () 를 지우기 위한 패턴
 
 BRACKET_PAIR_KO_PRONOUNCE_NO_SLASH = re.compile("\([^a-zA-Z]+?\)\([^a-zA-Z]+?\)") # (요)(이)
@@ -43,5 +44,5 @@ BRACKET_DOUBLE_JA_ONLY = re.compile("[『』]") # matching 『』
 
 
 ##영어
-BRACKET_PAIR_EN = re.compile("\(.+?\)\(.+?\)") # (head)(head)
+BRACKET_PAIR_EN = re.compile("\(\s*?.+?\s*?\)\s*?\(\s*?.+?\s*?\)") # (head)(head)
 BRACKET_PAIR_EN_ONLY = re.compile("[\(\)]")
