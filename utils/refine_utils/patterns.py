@@ -12,7 +12,7 @@ BRACKET_KO_FAKE = re.compile("[ㄱ-ㅎ가-힣ㅏ-ㅣ]+?\s*?\(\s*?[a-zA-Z]+?\s*?\
 BRACKET_KO = re.compile("[\(\)]") # 2. (문자) 에서 () 를 지우기 위한 패턴
 
 BRACKET_PAIR_KO_PRONOUNCE_NO_SLASH = re.compile("\([^a-zA-Z]+?\)\([^a-zA-Z]+?\)") # (요)(이)
-BRACKET_PAIR_KO_FAKE_NO_SLASH = re.compile("\(.+?\)\([\sa-zA-Z\'\"\-]+?\)") # (로제)(rose)
+BRACKET_PAIR_KO_FAKE_NO_SLASH = re.compile("\(.+?\)\([\?\&\s0-9a-zA-Z\'\"\-]+?\)") # (로제)(rose)
 BRACKET_WORD_PICKING = re.compile("\(.+?\)") # (요)(이) -> (요) 와 (이) 를 따로 찾기 위함. 
 
 BRACKET_EX = re.compile("\/\([^\/]+\)") # 뭣뭣/(무엇무엇) 모양 패턴
@@ -46,3 +46,5 @@ BRACKET_DOUBLE_JA_ONLY = re.compile("[『』]") # matching 『』
 ##영어
 BRACKET_PAIR_EN = re.compile("\(\s*?.+?\s*?\)\s*?\(\s*?.+?\s*?\)") # (head)(head)
 BRACKET_PAIR_EN_ONLY = re.compile("[\(\)]")
+
+BRACKET_PAIR_WITH_SLASH_EN = re.compile("\([\sa-zA-Z0-9\?\']+?\)\s*?\/\s*?\([\sa-zA-Z0-9\?\']+?\)") # (grandpa)/(grandfather)

@@ -6,7 +6,7 @@ from .patterns import (
     BRACKET_PAIR_KO_PRONOUNCE_NO_SLASH,
     BRACKET_PAIR_KO_FAKE_NO_SLASH,
     BRACKET_WORD_PICKING,
-    BRACKET_KO_FAKE
+    BRACKET_KO_FAKE,
 )
 import re
 
@@ -69,12 +69,14 @@ def refine_ko(line):
     if matched:
         for item in matched:
             try:
-                print(item)
+                # print(item)
                 selected_word = item.split("(")[0]
-                print(f"selected_word: {selected_word}")
+                # print(f"selected_word: {selected_word}")
                 line = line.replace(item, selected_word)
             except Exception as e:
                 print(e)
                 pass
-        return line 
+    
+    
+            
     return line 
