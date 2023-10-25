@@ -7,6 +7,7 @@ from .patterns import (
     BRACKET_PAIR_KO_FAKE_NO_SLASH,
     BRACKET_WORD_PICKING,
     BRACKET_KO_FAKE,
+    SPECIAL_CHARS_FOR_KO
 )
 import re
 
@@ -77,6 +78,12 @@ def refine_ko(line):
                 print(e)
                 pass
     
-    
-            
+    matched = re.findall(SPECIAL_CHARS_FOR_KO, line)
+    if matched:
+        for item in matched:
+            try:
+                line = line.replace(item, "")
+            except Exception as e:
+                print(e)
+                pass 
     return line 

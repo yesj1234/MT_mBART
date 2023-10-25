@@ -16,7 +16,7 @@ BRACKET_PAIR_KO_FAKE_NO_SLASH = re.compile("\(.+?\)\([\?\&\s0-9a-zA-Z\'\"\-]+?\)
 BRACKET_WORD_PICKING = re.compile("\(.+?\)") # (요)(이) -> (요) 와 (이) 를 따로 찾기 위함. 
 
 BRACKET_EX = re.compile("\/\([^\/]+\)") # 뭣뭣/(무엇무엇) 모양 패턴
-SPECIAL_CHARS_FOR_KO = re.compile("[a-z,?!%'~:/+\-*().·@]") # 한글 이외의 특수 기호들 [a-z,?!%'~:/+\-*().·@] 패턴 
+SPECIAL_CHARS_FOR_KO = re.compile("[,?!%'~:/+\-*().·@]") # 한글 이외의 특수 기호들 패턴 
 
 
 
@@ -40,8 +40,6 @@ BRACKET_PAIR_JA_ONLY = re.compile("[\(\)]")
 FIRST_BRACKET_FROM_PAIR = re.compile("\(.+?\)")
 
 BRACKET_PAIR_SECOND_JA = re.compile(f"[\({open_bracket}]\s*?([^a-zA-Z\({open_bracket}]+?)\s*?[\){close_bracket}]\s*?[\({open_bracket}]\s*?([^a-zA-Z]+?)\s*?[\){close_bracket}]")
-
-
 # (これ)(これ) / (そのように)(そのように) 
 # (私が)(本当に) / (大目に見ると)(足を踏み入れたら) 
 
