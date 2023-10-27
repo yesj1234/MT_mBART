@@ -27,13 +27,21 @@ SPECIAL_CHARS_FOR_KO = re.compile("[,?!%'~:/+\-*().·@]") # 한글 이외의 특
 
 
 ###### 중국어 ######
+angle_bracket_open = chr(12299)
+angle_bracket_close = chr(12298)
 BRACKET_PAIR_ZH = re.compile(f"[{open_bracket}\(].+?[{close_bracket}\)][{open_bracket}\(][^a-zA-Z]+?[{close_bracket}\)]") # （这个）（这个） 모양의 패턴 , 嗯，我好像有点(摄像机)(camera)恐惧症。 모양의 패턴들로부터 앞의 것 만 선택하기 위함. 
 BRACKET_ZH = re.compile(f"[\(\){open_bracket}{close_bracket}]") # （） char code 65288, 65289 괄호매칭
 BRACKET_ZH_FIRST_PART = re.compile(f"^[{open_bracket}\(].+?[{close_bracket}\)]") # （.）（.） 중 첫번째 괄호 매칭
+
 BRACKET_PAIR_ZH_SLASH = re.compile(f"[{open_bracket}\(][^\/]+?[{close_bracket}\)]\/[{open_bracket}\(][^\/{open_bracket}{close_bracket}]+?[{close_bracket}\)]")
+BRACKET_PAIR_ZH_SLASH_EXP = re.compile(f"[{open_bracket}\(][^\/]+?[{close_bracket}\)]\/[{open_bracket}\(]([^\/{open_bracket}{close_bracket}]+?)[{close_bracket}\)]")
+
 BRACKET_PAIR_ZH_FAKE = re.compile(f"[\({open_bracket}].+?[\){close_bracket}][\({open_bracket}][a-zA-Z\s]+?[\){close_bracket}]")
 
+ANGLE_BRACKET_ZH = re.compile(f"[{angle_bracket_close}{angle_bracket_open}]")
 
+ENGLISH_BRACKET_ZH = re.compile(f"[a-zA-Z0-9]+?\s*?[{open_bracket}\(]\s*?.+?\s*?[{close_bracket}\)]") # boss（头目）
+ENGLISH_BRACKET_ZH_EXP = re.compile(f"[a-zA-Z0-9]+?\s*?[{open_bracket}\(]\s*?(.+?)\s*?[{close_bracket}\)]") 
 
 
 

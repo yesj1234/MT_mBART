@@ -37,7 +37,6 @@ def main(args):
                     lines = original_file.readlines()
                     new_lines = []
                     cnt = 0
-                        # ()/() 모양 패턴 제거
                     for line in lines: 
                         try:
                             transcription, translation = langs_mapper[args.langs](line)
@@ -53,7 +52,7 @@ def main(args):
                         
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--tsv_splits_dir", help="asr_splits 디렉토리 경로")
+    parser.add_argument("--tsv_splits_dir", help="mt_split 디렉토리 경로")
     parser.add_argument("--langs", help="ko_en, ko_ja, ko_zh, en_ko, ja_ko, zh_ko")
     args = parser.parse_args()
     main(args)

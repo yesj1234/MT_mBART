@@ -102,9 +102,9 @@ def refine_ko(line):
     
     matched = re.findall(REMAINING_BRACKET_TO_REMOVE_KO,line)# 남아 있는 괄호들 제거
     if matched:
-        print(f"matched: {matched}")
+        # print(f"matched: {matched}")
         line = re.sub(REMAINING_BRACKET_TO_REMOVE_KO, "", line)
-        print(f"line: {line}")
+        # print(f"line: {line}")
     
     matched = re.findall(SPECIAL_CHARS_FOR_KO, line)
     if matched:
