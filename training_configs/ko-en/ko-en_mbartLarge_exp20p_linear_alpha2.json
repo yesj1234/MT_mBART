@@ -3,7 +3,7 @@
     "overwrite_output_dir": true,
     "source_lang": "ko_KR",
     "target_lang": "en_XX",
-    "learning_rate": 5.5e-5,
+    "learning_rate": 4.5e-5,
     "pad_to_max_length": true,
     "output_dir": "./ko-en_mbartLarge_exp20p_linear_alpha",
     "per_device_train_batch_size": 4,
