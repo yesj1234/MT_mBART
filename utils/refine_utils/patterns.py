@@ -48,6 +48,7 @@ FIRST_BRACKET_FROM_PAIR = re.compile("\(.+?\)")
 BRACKET_PAIR_SECOND_JA = re.compile(f"[\({open_bracket}]\s*?([^a-zA-Z\({open_bracket}]+?)\s*?[\){close_bracket}]\s*?[\({open_bracket}]\s*?([^a-zA-Z]+?)\s*?[\){close_bracket}]")
 
 BRACKET_PAIR_WITH_SLASH_JA = re.compile(f"[\({open_bracket}]\s*?([^a-zA-Z\({open_bracket}]+?)\s*?[\){close_bracket}]\s*?[\/{slash_ja}]\s*?[\({open_bracket}]\s*?([^a-zA-Z]+?)\s*?[\){close_bracket}]")
+BRACKET_PAIR_WITH_SLASH_JA_NO_GROUP = re.compile(f"[\({open_bracket}]\s*?[^a-zA-Z\({open_bracket}]+?\s*?[\){close_bracket}]\s*?[\/{slash_ja}]\s*?[\({open_bracket}]\s*?[^a-zA-Z]+?\s*?[\){close_bracket}]")
 # (これ)(これ) / (そのように)(そのように) 
 # (私が)(本当に) / (大目に見ると)(足を踏み入れたら) 
 

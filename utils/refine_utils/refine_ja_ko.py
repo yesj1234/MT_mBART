@@ -1,6 +1,7 @@
 import re
 from .patterns import (
     BRACKET_PAIR_WITH_SLASH_JA,
+    BRACKET_PAIR_WITH_SLASH_JA_NO_GROUP,
     slash_ja,
     open_bracket,
     close_bracket
@@ -10,19 +11,18 @@ from .refine_ko import refine_ko
 def refine_ja(line):
     matched = re.findall(BRACKET_PAIR_WITH_SLASH_JA, line) # （人んち）／（人の家） 혹은 (ほんまに)/(本当に) 
     if matched:
+        print(f"matched: {matched}")
         for item in matched:
-            try:
-                if slash_ja in item:
-                    first_part = item.split("/")[0] # 
-                    first_part = re.sub(f"[(){open_bracket}{close_bracket}]", "", first_part) # 
-                    line = line.replace(item, first_part) # 
-                elif "/" in item:
-                    first_part = item.split("/")[0] # 
-                    first_part = re.sub(f"[(){open_bracket}{close_bracket}]", "", first_part) # 
-                    line = line.replace(item, first_part) # 
+            try: 
+                matched_part = re.search(BRACKET_PAIR_WITH_SLASH_JA_NO_GROUP, line).group()
+                print(f"item in matched: {item}")
+                print(f"matched_part: {matched_part}")
+                _, selected_one = item
+                line = line.replace(matched_part, selected_one)
+                print(f"line: {line}")
             except Exception as e:
                 print(e)
-                pass
+                pass 
     return line 
 
 def refine_ja_ko(line):
