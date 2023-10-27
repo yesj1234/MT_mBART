@@ -33,6 +33,7 @@ BRACKET_PAIR_ZH_FAKE = re.compile(f"[\({open_bracket}].+?[\){close_bracket}][\({
 
 
 ###### 일본어 ######
+slash_ja = chr(65295) # "／"
 BRACKET_RIGHT_ANGLE_JA = re.compile("[\「\」\『\』]")   # 「」,『』 PATTERN. Simply remove the symbol.
 
 BRACKET_PAIR_JA = re.compile("\(\s*?.+?\s*?\)\s*?\(\s*?[a-zA-Z.\?\']+?\s*?\)") # 文字通りオム(エッセンス)(essence)男性向けの(エッセンス)(essence)を用意しております。
@@ -40,6 +41,8 @@ BRACKET_PAIR_JA_ONLY = re.compile("[\(\)]")
 FIRST_BRACKET_FROM_PAIR = re.compile("\(.+?\)")
 
 BRACKET_PAIR_SECOND_JA = re.compile(f"[\({open_bracket}]\s*?([^a-zA-Z\({open_bracket}]+?)\s*?[\){close_bracket}]\s*?[\({open_bracket}]\s*?([^a-zA-Z]+?)\s*?[\){close_bracket}]")
+
+BRACKET_PAIR_WITH_SLASH_JA = re.compile(f"[\({open_bracket}]\s*?([^a-zA-Z\({open_bracket}]+?)\s*?[\){close_bracket}]\s*?[\/{slash_ja}]\s*?[\({open_bracket}]\s*?([^a-zA-Z]+?)\s*?[\){close_bracket}]")
 # (これ)(これ) / (そのように)(そのように) 
 # (私が)(本当に) / (大目に見ると)(足を踏み入れたら) 
 
