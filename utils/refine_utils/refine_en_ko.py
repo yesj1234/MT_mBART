@@ -1,5 +1,13 @@
 import re 
-from .refine_ko import refine_ko
+
+
+def refine_ko(line):
+    BRACKET_PATTERN = re.compile("\(.+?\)")
+    matched = re.findall(BRACKET_PATTERN, line)
+    if matched:
+        for item in matched:
+            line = line.replace(item, "")
+    return line 
 
 def refine_en(line):
     return line
