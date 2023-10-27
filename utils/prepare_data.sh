@@ -10,7 +10,7 @@ export SPLITS_DIR=/home/ubuntu/'한국어(KO)_영어(EN)'/mt_split
 python3 $PREPARE_FROM_JSON_MT \
 --mt_dest_file /home/ubuntu/'한국어(KO)_영어(EN)' \
 --jsons /home/ubuntu/'한국어(KO)_영어(EN)'/ \
---ratio 0.5
+--ratio 1
 
 python3 $REFINE_DATA \
 --tsv_splits_dir /home/ubuntu/'한국어(KO)_영어(EN)'/mt_split \

@@ -3,7 +3,8 @@ from .patterns import (
     BRACKET_PAIR_EN, 
     FIRST_BRACKET_FROM_PAIR, 
     BRACKET_PAIR_EN_ONLY, 
-    BRACKET_PAIR_WITH_SLASH_EN
+    BRACKET_PAIR_WITH_SLASH_EN,
+    REMAINING_BRACKET_TO_REMOVE
 )
 import re
 
@@ -22,7 +23,14 @@ def refine_en(line):
             first_word = item.split(")")[0][1:]
             # print(f"first_word: {first_word}")
             line = line.replace(item, first_word)
+    
+    # remove remaining parenthesis 
+    matched = re.findall(REMAINING_BRACKET_TO_REMOVE, line)
+    if matched:
+        line = re.sub(REMAINING_BRACKET_TO_REMOVE, "", line)
     return line 
+
+
 
 def refine_ko_en(line):
     transcription, translation = line.split(" :: ")

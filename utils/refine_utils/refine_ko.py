@@ -7,7 +7,10 @@ from .patterns import (
     BRACKET_PAIR_KO_FAKE_NO_SLASH,
     BRACKET_WORD_PICKING,
     BRACKET_KO_FAKE,
-    SPECIAL_CHARS_FOR_KO
+    SPECIAL_CHARS_FOR_KO,
+    REMAINING_BRACKET_TO_REMOVE_KO,
+    BRACKET_PAIR_KO_FAKE_REVERSE,
+    BRACKET_EX_WITHOUT_SLASH
 )
 import re
 
@@ -26,8 +29,16 @@ def refine_ko(line):
     matched = re.findall(BRACKET_EX, line) # 뭣뭣/(무엇무엇)
     if matched:
         for item in matched:
-            first_part = item.split("/")[1] # 무엇무엇 선택 
-            line = line.replace(item, first_part) # 뭣뭣/(뭐뭐) -> 무엇무엇
+            second_part = item.split("/")[1] # 무엇무엇 선택 
+            second_part = re.sub("\(\)", "", second_part)
+            line = line.replace(item, second_part) # 뭣뭣/(뭐뭐) -> 무엇무엇
+    
+    matched = re.findall(BRACKET_EX_WITHOUT_SLASH, line) # 모모모(뭐뭐뭐)
+    if matched:
+        for item in matched:
+            second_part = item.split("(")[1]
+            second_part = re.sub("\)", "", second_part)
+            line = line.replace(item, second_part)
     
     matched = re.findall(BRACKET_PAIR_KO_FAKE, line) # (로제)/(rose)
     if matched:
@@ -36,6 +47,17 @@ def refine_ko(line):
                 first_part = item.split("/")[0] # (로제)
                 first_part = re.sub(BRACKET_KO, "", first_part) # (로제) -> 애
                 line = line.replace(item, first_part) # (로제)/(rose) -> 로제 
+            except Exception as e:
+                print(e)
+                pass
+    
+    matched = re.findall(BRACKET_PAIR_KO_FAKE_REVERSE, line) # (rose)/(로제)
+    if matched:
+        for item in matched:
+            try:
+                second_part = item.split("/")[1]
+                second_part = re.sub(BRACKET_KO, "", second_part)
+                line = line.replace(item, second_part)
             except Exception as e:
                 print(e)
                 pass
@@ -77,6 +99,12 @@ def refine_ko(line):
             except Exception as e:
                 print(e)
                 pass
+    
+    matched = re.findall(REMAINING_BRACKET_TO_REMOVE_KO,line)# 남아 있는 괄호들 제거
+    if matched:
+        print(f"matched: {matched}")
+        line = re.sub(REMAINING_BRACKET_TO_REMOVE_KO, "", line)
+        print(f"line: {line}")
     
     matched = re.findall(SPECIAL_CHARS_FOR_KO, line)
     if matched:
