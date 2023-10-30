@@ -64,11 +64,11 @@ fh_formatter = logging.Formatter(
     fmt = '%(asctime)s|%(name)s|%(message)s',
     datefmt = '%Y-%m-%d %H:%M:%S'
 )
-prediction_logger = logging.getLogger("prediction_logger")
-file_handler = logging.FileHandler("model_predictions_exp15.log")
-file_handler.setFormatter(fh_formatter)
-file_handler.setLevel(logging.CRITICAL)
-prediction_logger.addHandler(file_handler)
+# prediction_logger = logging.getLogger("prediction_logger")
+# file_handler = logging.FileHandler("model_predictions_exp15.log")
+# file_handler.setFormatter(fh_formatter)
+# file_handler.setLevel(logging.CRITICAL)
+# prediction_logger.addHandler(file_handler)
 
 # A list of all multilingual tokenizer which require src_lang and tgt_lang attributes.
 MULTILINGUAL_TOKENIZERS = [MBartTokenizer, MBartTokenizerFast, MBart50Tokenizer, MBart50TokenizerFast, M2M100Tokenizer]
