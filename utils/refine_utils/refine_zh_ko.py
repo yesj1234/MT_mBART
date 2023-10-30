@@ -21,9 +21,9 @@ def refine_zh(line):
     matched = re.findall(ENGLISH_BRACKET_ZH, line) # 好玩吗 好像他也是打boss（头目）那种东西。 :: 재밌어요? 이것도 보스를 타격하는 그런 게임인 것 같아요.
     if matched:
         for item in matched:
-            print(f"item : {item}")
+            # print(f"item : {item}")
             selected_word = re.search(ENGLISH_BRACKET_ZH_EXP, item).groups()[0]
-            print(f"selected_word : {selected_word}")
+            # print(f"selected_word : {selected_word}")
             line = line.replace(item, selected_word)
     
     matched = re.findall(BRACKET_PAIR_ZH_SLASH, line) # 我又下來了，（怎么的）/（怎么样），我又滾。 :: 나 또 내려왔어요. 어쩔거야. 난 간다. 
