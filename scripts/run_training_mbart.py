@@ -604,10 +604,8 @@ def main():
         result = metric.compute(predictions=decoded_preds, references=decoded_labels)
         bp = result["bp"]    
         precisions = result["precisions"]
-        gram_3 = bp * math.exp(sum([my_log(p) for p in precisions[:3]]) / 3)
-        logger.info(f"3gram score: {gram_3}")
-        result["3gram"] = gram_3
-        result = {"bleu": result["score"]}
+        bleu_score  = bp * math.exp(sum([my_log(p) for p in precisions[:3]]) / 3)
+        result = {"bleu": bleu_score}
         prediction_lens = [np.count_nonzero(pred != tokenizer.pad_token_id) for pred in preds]
         result["gen_len"] = np.mean(prediction_lens)
         result = {k: round(v, 4) for k, v in result.items()}
