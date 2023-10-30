@@ -15,11 +15,11 @@ def refine_ja(line):
         for item in matched:
             try: 
                 matched_part = re.search(BRACKET_PAIR_WITH_SLASH_JA_NO_GROUP, line).group()
-                print(f"item in matched: {item}")
-                print(f"matched_part: {matched_part}")
+                # print(f"item in matched: {item}")
+                # print(f"matched_part: {matched_part}")
                 _, selected_one = item
                 line = line.replace(matched_part, selected_one)
-                print(f"line: {line}")
+                # print(f"line: {line}")
             except Exception as e:
                 print(e)
                 pass 
