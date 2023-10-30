@@ -681,15 +681,24 @@ def main():
 
         if trainer.is_world_process_zero():
             if training_args.predict_with_generate:
+                labels = predict_results.label_ids # [[], [], ...]
+                refs = np.where(labels != -100, labels, tokenizer.pad_token_id)
+                refs = tokenizer.batch_decode(
+                    refs, skip_special_tokens=True, clean_up_tokenization_spaces=True
+                )
+                refs = [ref for ref in refs]
+                
                 predictions = predict_results.predictions
                 predictions = np.where(predictions != -100, predictions, tokenizer.pad_token_id)
+                
                 predictions = tokenizer.batch_decode(
                     predictions, skip_special_tokens=True, clean_up_tokenization_spaces=True
                 )
                 predictions = [pred.strip() for pred in predictions]
                 output_prediction_file = os.path.join(training_args.output_dir, "generated_predictions.txt")
                 with open(output_prediction_file, "w", encoding="utf-8") as writer:
-                    writer.write("\n".join(predictions))
+                    for i in range(len(refs)):
+                        writer.write(f"{refs[i]} :: {predictions[i]}\n")
 
     kwargs = {"finetuned_from": model_args.model_name_or_path, "tasks": "translation"}
     if data_args.dataset_name is not None:
