@@ -1,40 +1,32 @@
 import re
-from .patterns import BRACKET_PAIR_ZH_SLASH, BRACKET_ZH, BRACKET_KO
+from .patterns import (
+    BRACKET_PAIR_WITH_SLASH_JA,
+    BRACKET_PAIR_WITH_SLASH_JA_NO_GROUP,
+    slash_ja,
+    open_bracket,
+    close_bracket
+)
+from .refine_ko import refine_ko
 
-def refine_ko(line):
-    return line    
 def refine_ja(line):
-    BRACKET_PAIR = re.compile("\([^\/]+\)\/\([^\/\(\)]+\)") # 1. (이거)/(요거) 모양 패턴
-    matched = re.findall(BRACKET_PAIR, line) # (애)/(아)
+    matched = re.findall(BRACKET_PAIR_WITH_SLASH_JA, line) # （人んち）／（人の家） 혹은 (ほんまに)/(本当に) 
     if matched:
+        print(f"matched: {matched}")
         for item in matched:
-            try:
-                first_part = item.split("/")[0] # (애)
-                first_part = re.sub(BRACKET_KO, "", first_part) # (애) -> 애
-                line = line.replace(item, first_part) # (애)/(아) -> 애 
+            try: 
+                matched_part = re.search(BRACKET_PAIR_WITH_SLASH_JA_NO_GROUP, line).group()
+                print(f"item in matched: {item}")
+                print(f"matched_part: {matched_part}")
+                _, selected_one = item
+                line = line.replace(matched_part, selected_one)
+                print(f"line: {line}")
             except Exception as e:
                 print(e)
-                pass
-    matched = re.findall(BRACKET_PAIR_ZH_SLASH, line) # （这个）/（这个）
-    if matched:
-        for item in matched:
-            print(item)
-            try:
-                first_part = item.split("/")[0] # （这个）
-                print(first_part)
-                first_part = re.sub(BRACKET_ZH, "", first_part) # （这个） -> 这个
-                print(first_part)
-                line = line.replace(item, first_part) # （这个）/（这个） -> 这个
-                print(line)
-            except Exception as e:
-                print(e)
-                pass
-            return line
-    else:
-        return line
+                pass 
+    return line 
 
 def refine_ja_ko(line):
     transcription, translation = line.split(" :: ")
-    transcription = refine_ja(transcription)
-    translation = refine_ko(translation)
+    transcription = refine_ja(str(transcription))
+    translation = refine_ko(str(translation))
     return transcription, translation

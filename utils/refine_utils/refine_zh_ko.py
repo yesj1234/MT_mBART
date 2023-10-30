@@ -1,39 +1,44 @@
 import re 
-from .patterns import BRACKET_PAIR_ZH, BRACKET_ZH_FIRST_PART, BRACKET_PAIR_ZH_SLASH, BRACKET_ZH
+from .patterns import (
+    ANGLE_BRACKET_ZH,
+    ENGLISH_BRACKET_ZH,
+    BRACKET_PAIR_ZH_SLASH,
+    ENGLISH_BRACKET_ZH_EXP,
+    BRACKET_PAIR_ZH_SLASH_EXP
+)
+from .refine_ko import refine_ko
 
-def refine_ko(line):
-    return line
+# 但是不是《传奇》。 :: 하지만 "레전드"가 아니고 .
+# 谢谢000大凌。 :: 000대릉(大凌) 감사합니다.
+# 好玩吗 好像他也是打boss（头目）那种东西。 :: 재밌어요? 이것도 보스를 타격하는 그런 게임인 것 같아요.
+# 我又下來了，（怎么的）/（怎么样），我又滾。 :: 나 또 내려왔어요. 어쩔거야. 난 간다.
+
 def refine_zh(line):
-    line = str(line)
-    matched = re.findall(BRACKET_PAIR_ZH, line) # （这个）（这个）
+    matched = re.findall(ANGLE_BRACKET_ZH, line) # 但是不是《传奇》。 :: 하지만 "레전드"가 아니고 .
+    if matched:
+        line = re.sub(ANGLE_BRACKET_ZH, "", line)
+    
+    matched = re.findall(ENGLISH_BRACKET_ZH, line) # 好玩吗 好像他也是打boss（头目）那种东西。 :: 재밌어요? 이것도 보스를 타격하는 그런 게임인 것 같아요.
     if matched:
         for item in matched:
-            item = str(item)
-            print(item)
-            first_part = re.match(BRACKET_ZH_FIRST_PART, item)[0] # （这个）
-            first_part = str(first_part)
-            print(first_part)
-            first_part = re.sub(BRACKET_ZH, "", first_part) # 这个
-            first_part = str(first_part)
-            line = line.replace(item, first_part) # （这个）（这个） -> 这个 
-            print(line)
-    matched = re.findall(BRACKET_PAIR_ZH_SLASH, line) # （这个）/（这个）
+            print(f"item : {item}")
+            selected_word = re.search(ENGLISH_BRACKET_ZH_EXP, item).groups()[0]
+            print(f"selected_word : {selected_word}")
+            line = line.replace(item, selected_word)
+    
+    matched = re.findall(BRACKET_PAIR_ZH_SLASH, line) # 我又下來了，（怎么的）/（怎么样），我又滾。 :: 나 또 내려왔어요. 어쩔거야. 난 간다. 
     if matched:
         for item in matched:
-            try:
-                first_part = item.split("/")[0] # （这个）
-                first_part = re.sub(BRACKET_ZH, "", first_part) # （这个） -> 这个
-                line = line.replace(item, first_part) # （这个）/（这个） -> 这个
-            except Exception as e:
-                print(e)
-                pass
-            return line
-    else:
-        return line
-
+            # print(f"item : {item}")
+            selected_word = re.search(BRACKET_PAIR_ZH_SLASH_EXP, item).groups()[0]
+            # print(f"selected_word : {selected_word}")
+            line = line.replace(item, selected_word)
+            # print(f"line: {line}")
+    
+    return line 
 
 def refine_zh_ko(line):
     transcription, translation = line.split(" :: ")
-    transcription = refine_zh(transcription)
-    translation = refine_ko(translation)
+    transcription = refine_zh(str(transcription))
+    translation = refine_ko(str(translation))
     return transcription, translation

@@ -572,9 +572,7 @@ def main():
         )
 
     # Metric
-    metric_bleu = evaluate.load("bleu")
     metric = evaluate.load("sacrebleu")
-    metric_3gram = evaluate.load("sacrebleu")
     
     def postprocess_text(preds, labels):
         preds = [pred.strip() for pred in preds]
