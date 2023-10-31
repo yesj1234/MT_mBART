@@ -43,6 +43,7 @@ ANGLE_BRACKET_ZH = re.compile(f"[{angle_bracket_close}{angle_bracket_open}]")
 ENGLISH_BRACKET_ZH = re.compile(f"[a-zA-Z0-9]+?\s*?[{open_bracket}\(]\s*?.+?\s*?[{close_bracket}\)]") # boss（头目）
 ENGLISH_BRACKET_ZH_EXP = re.compile(f"[a-zA-Z0-9]+?\s*?[{open_bracket}\(]\s*?(.+?)\s*?[{close_bracket}\)]") 
 
+SPECIAL_CHARS_FOR_ZH = re.compile(f"[。,?.]")
 
 
 ###### 일본어 ######
