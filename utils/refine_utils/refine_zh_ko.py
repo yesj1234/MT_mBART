@@ -4,7 +4,8 @@ from .patterns import (
     ENGLISH_BRACKET_ZH,
     BRACKET_PAIR_ZH_SLASH,
     ENGLISH_BRACKET_ZH_EXP,
-    BRACKET_PAIR_ZH_SLASH_EXP
+    BRACKET_PAIR_ZH_SLASH_EXP,
+    SPECIAL_CHARS_FOR_ZH
 )
 from .refine_ko import refine_ko
 
@@ -35,6 +36,10 @@ def refine_zh(line):
             line = line.replace(item, selected_word)
             # print(f"line: {line}")
     
+    matched = re.findall(SPECIAL_CHARS_FOR_ZH, line)
+    if matched:
+        for item in matched:
+            line = line.replace(item, "")
     return line 
 
 def refine_zh_ko(line):

@@ -3,7 +3,8 @@ from .patterns import (
     BRACKET_ZH, 
     BRACKET_ZH_FIRST_PART, 
     BRACKET_PAIR_ZH_FAKE,
-    BRACKET_PAIR_ZH_SLASH
+    BRACKET_PAIR_ZH_SLASH, 
+    SPECIAL_CHARS_FOR_ZH
 )
 from .refine_ko import refine_ko
 import re 
@@ -36,6 +37,11 @@ def refine_zh(line):
             first_part = str(re.match(BRACKET_ZH_FIRST_PART, item)[0])
             first_part = re.sub(BRACKET_ZH, "", first_part)
             line = line.replcae(item, first_part)
+
+    matched = re.findall(SPECIAL_CHARS_FOR_ZH, line)
+    if matched:
+        for item in matched:
+            line = line.replace(item, "")
     return line 
 
 
