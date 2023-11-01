@@ -628,7 +628,7 @@ def main():
         tokenizer=tokenizer,
         data_collator=data_collator,
         compute_metrics=compute_metrics if training_args.predict_with_generate else None,
-        callbacks = [EarlyStoppingCallback(early_stopping_patience = 4)]
+        callbacks = [EarlyStoppingCallback(early_stopping_patience = 3)]
     )
 
     # Training

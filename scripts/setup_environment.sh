@@ -13,6 +13,7 @@ sudo apt install -y python3-pip
 
 # 4. install python libraries 
 pip install transformers datasets torch torchaudio torchvision numpy jiwer soundfile librosa evaluate
+pip install mecab-python3
 pip install accelerate -U
 pip install --upgrade urllib3 requests
 pip install sentencepiece sacrebleu "sacrebleu[ja]" "sacrebleu[ko]"
