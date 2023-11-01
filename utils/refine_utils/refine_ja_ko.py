@@ -4,7 +4,8 @@ from .patterns import (
     BRACKET_PAIR_WITH_SLASH_JA_NO_GROUP,
     slash_ja,
     open_bracket,
-    close_bracket
+    close_bracket,
+    SPECIAL_CHARS_FOR_JA
 )
 from .refine_ko import refine_ko
 
@@ -23,6 +24,11 @@ def refine_ja(line):
             except Exception as e:
                 print(e)
                 pass 
+    matched = re.findall(SPECIAL_CHARS_FOR_JA, line)
+    if matched:
+        for item in matched:
+            line = line.replace(item, "")
+            
     return line 
 
 def refine_ja_ko(line):

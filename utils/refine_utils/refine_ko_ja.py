@@ -3,7 +3,8 @@ from .patterns import (
     BRACKET_PAIR_JA_ONLY,
     FIRST_BRACKET_FROM_PAIR,
     BRACKET_RIGHT_ANGLE_JA,
-    BRACKET_PAIR_SECOND_JA
+    BRACKET_PAIR_SECOND_JA,
+    SPECIAL_CHARS_FOR_JA
 )
 from .refine_ko import refine_ko
 import re 
@@ -58,11 +59,19 @@ def bracket_pair_second(line):
             except Exception as e:
                 pass
     return line 
-        
+
+def special_chars(line):
+    matched = re.findall(SPECIAL_CHARS_FOR_JA, line)
+    if matched:
+        for item in matched:
+            line = line.replace(item, "")
+    return line 
+
 def refine_ja(line):
     line = bracket_right_angle(line)
     line = bracket_pair(line)
     line = bracket_pair_second(line)
+    line = special_chars(line)
     return line 
 
 

@@ -64,6 +64,8 @@ BRACKET_PAIR_WITH_SLASH_JA_NO_GROUP = re.compile(f"[\({open_bracket}]\s*?[^a-zA-
 # (これ)(これ) / (そのように)(そのように) 
 # (私が)(本当に) / (大目に見ると)(足を踏み入れたら) 
 
+SPECIAL_CHARS_FOR_JA = re.compile(f"[。,?.{comma_zh}{question_zh}!{exclamation_zh}]")
+
 ##영어
 BRACKET_PAIR_EN = re.compile("\(\s*?.+?\s*?\)\s*?\(\s*?.+?\s*?\)") # (head)(head)
 BRACKET_PAIR_EN_ONLY = re.compile("[\(\)]")
