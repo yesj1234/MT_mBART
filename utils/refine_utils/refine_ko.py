@@ -44,9 +44,12 @@ def refine_ko(line):
     if matched:
         for item in matched:
             try:
+                # print(f"formatting item: {item}")
                 first_part = item.split("/")[0] # (로제)
+                # print(f"first_part: {first_part}")
                 first_part = re.sub(BRACKET_KO, "", first_part) # (로제) -> 로제
                 line = line.replace(item, first_part) # (로제)/(rose) -> 로제 
+                # print(f"formatted line: {line}")
             except Exception as e:
                 print(e)
                 pass
