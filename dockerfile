@@ -9,6 +9,7 @@ RUN python -m pip install transformers
 RUN python -m pip install datasets 
 RUN python -m pip install torch 
 RUN python -m pip install torchaudio 
+RUN python -m pip install torchvision
 RUN python -m pip install numpy 
 RUN python -m pip install evaluate 
 RUN python -m pip install fairseq
@@ -17,4 +18,6 @@ RUN python -m pip install urllib3
 RUN python -m pip install requests
 RUN python -m pip install sentencepiece 
 RUN python -m pip install sacrebleu
+RUN python -m pip install sacrebleu[ja]
+RUN python -m pip install sacrebleu[ko]
 RUN python -m pip install protobuf 
