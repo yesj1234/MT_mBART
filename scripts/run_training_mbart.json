@@ -31,7 +31,5 @@
     "forced_bos_token": "ko_KR",
     "use_fast_tokenizer": true,
     "max_target_length": 200,
-    "weight_decay": 1e-6,
-    "report_to": "wandb",
-    "run_name": "enko_mbartLarge_36p_exp1"
+    "weight_decay": 1e-6
 }
