@@ -73,7 +73,7 @@ fh_formatter = logging.Formatter(
 # A list of all multilingual tokenizer which require src_lang and tgt_lang attributes.
 MULTILINGUAL_TOKENIZERS = [MBartTokenizer, MBartTokenizerFast, MBart50Tokenizer, MBart50TokenizerFast, M2M100Tokenizer]
 
-SACREBLE_TOKENIZE = {
+SACREBLEU_TOKENIZE = {
     "ko_KR": "ko-mecab",
     "ja_XX": "ja-mecab",
     "en_XX": "13a",
@@ -607,7 +607,7 @@ def main():
                 return -9999999999
             return math.log(num)
         
-        result = metric.compute(predictions=decoded_preds, references=decoded_labels, tokenize = SACREBLE_TOKENIZE[data_args.target_lang])
+        result = metric.compute(predictions=decoded_preds, references=decoded_labels, tokenize = SACREBLEU_TOKENIZE[data_args.target_lang])
         bp = result["bp"]    
         precisions = result["precisions"]
         bleu_score  = bp * math.exp(sum([my_log(p) for p in precisions[:3]]) / 3)
