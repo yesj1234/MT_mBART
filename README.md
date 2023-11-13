@@ -14,9 +14,9 @@ python3 prepare_from_json_mt.py --mt_dest_folder ./mt_split --jsons ./output/한
 2. **_refine_data.py_**
 
 ```bash
-python3 $REFINE_DATA --tsv_splits_dir /home/ubuntu/한국어(KO)_영어(EN)/mt_split --langs $SOURCE_LANG_$TARGET_LANG
+python3 refine_data.py --tsv_splits_dir /home/ubuntu/한국어(KO)_영어(EN)/mt_split --langs $SOURCE_LANG_$TARGET_LANG
 e.g.
-python3 $REFINE_DATA --tsv_splits_dir /home/ubuntu/한국어(KO)_영어(EN)/mt_split --langs ko_en
+python3 refine_data.py --tsv_splits_dir /home/ubuntu/한국어(KO)_영어(EN)/mt_split --langs ko_en
 ```
 
 3. **_tsv_to_json.py_**
@@ -25,9 +25,9 @@ python3 $REFINE_DATA --tsv_splits_dir /home/ubuntu/한국어(KO)_영어(EN)/mt_s
 # preparing json file that will be used in run_training_mbart.py.
 # source_lang : en ko ja zh
 # target_lang : en ko ja zh
-python3 2.tsv_to_json.py --split_path /path/to/the/folder/containing/splits.tsv --source_lang source_lang --target_lang target_lang
+python3 tsv_to_json.py --split_path /path/to/the/folder/containing/splits.tsv --source_lang source_lang --target_lang target_lang
 e.g.
-python3 2.tsv_to_json.py --split_path ./mt_split --source_lang ko --target_lang en
+python3 tsv_to_json.py --split_path ./mt_split --source_lang ko --target_lang en
 ```
 
 ## Dockerizing
