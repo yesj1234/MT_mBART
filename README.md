@@ -106,7 +106,7 @@ bash run_container.sh # sudo docker run -it --ipc host --gpus all -v /home/ubunt
 3. preprocess(inside the container)
 
 ```bash
-bash reduce_model_ko-ja.sh # bash reduce_model_<source_lang>-<target_lang>.sh
+bash prepare_data.sh
 ```
 
 4. and, train!
