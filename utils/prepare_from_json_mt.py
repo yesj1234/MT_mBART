@@ -19,11 +19,15 @@ logger.addHandler(streamHandler)
 
 def get_neccesary_info(json_file):
     json_data = json.load(json_file)
+    json_filename = json_data["fi_sound_filepath"].split("/")[-3:]
+    json_filename = json_filename.replace(".wav", ".json")
+    
     transcription = json_data["tc_text"]
     transcription = re.sub("\n", " ", transcription)
+    
     translation = json_data["tl_trans_text"]
     translation = re.sub("\n", " ", translation)
-    return transcription, translation
+    return transcription, translation, json_filename
 
 def get_pairs(dir_path, ratio = 1.0):
     pairs = []
@@ -38,9 +42,9 @@ def get_pairs(dir_path, ratio = 1.0):
                         if ext == ".json":
                             with open(os.path.join(root, dir, file), "r", encoding="utf-8") as json_file:
                                 try:
-                                    transcription, translation = get_neccesary_info(
+                                    transcription, translation, json_filename = get_neccesary_info(
                                         json_file)
-                                    pairs.append((transcription, translation))
+                                    pairs.append((transcription, translation, json_filename))
                                 except Exception as e:
                                     logger.warning(e)
                                     logger.warning(file)
@@ -51,17 +55,22 @@ def get_pairs(dir_path, ratio = 1.0):
 def split_data(pairs):
     transcriptions = list(map(lambda x:x[0], pairs))
     translations = list(map(lambda x:x[1], pairs))
+    json_filenames = list(map(lambda x:x[2], pairs))
     transcription_train, transcription_validate, transcription_test = np.split(
         transcriptions, [int(len(transcriptions)*0.8), int(len(transcriptions)*0.9)])
     translation_train, translation_validate, translation_test = np.split(translations, [
                                                                          int(len(translations)*0.8), int(len(translations)*0.9)])
+    json_filenames_train, json_filenames_validate, json_filenames_test = np.split(json_filenames, [
+                                                                         int(len(json_filenames)*0.8), int(len(json_filenames)*0.9)])
+
+
     assert len(transcription_train) == len(
         translation_train), "train split 길이 안맞음."
     assert len(transcription_test) == len(
         translation_test), "test split 길이 안맞음."
     assert len(transcription_validate) == len(
         translation_validate), "validate split 길이 안맞음."
-    return transcription_train, transcription_validate, transcription_test, translation_train, translation_validate, translation_test
+    return transcription_train, transcription_validate, transcription_test, translation_train, translation_validate, translation_test, json_filenames_train, json_filenames_validate, json_filenames_test
 
 def main(args):
     np.random.seed(42) # for reproduciblitity
@@ -85,21 +94,35 @@ def main(args):
         translation_test), "test split 길이 안맞음."
     assert len(transcription_validate) == len(
         translation_validate), "validate split 길이 안맞음."
-    transcription_train, transcription_validate, transcription_test, translation_train, translation_validate, translation_test = split_data(transcription_translation_set)
+    transcription_train, transcription_validate, transcription_test, \
+    translation_train, translation_validate, translation_test, \
+    json_filenames_train, json_filenames_validate, json_filenames_test = split_data(transcription_translation_set)
+    
     
     with open(f"{os.path.join(args.mt_dest_file, 'mt_split', 'train.tsv')}", "a+", encoding="utf-8") as mt_train, \
-            open(f"{os.path.join(args.mt_dest_file, 'mt_split','test.tsv')}", "a+", encoding="utf-8") as mt_test, \
-            open(f"{os.path.join(args.mt_dest_file, 'mt_split','validation.tsv')}", "a+", encoding="utf-8") as mt_validate:
+         open(f"{os.path.join(args.mt_dest_file, 'mt_split','test.tsv')}", "a+", encoding="utf-8") as mt_test, \
+         open(f"{os.path.join(args.mt_dest_file, 'mt_split','validation.tsv')}", "a+", encoding="utf-8") as mt_validate \
+         open(f"{os.path.join(args.mt_dest_file, 'mt_split','train_filenames.tsv')}", "a+", encoding="utf-8") as mt_train_filenames \
+         open(f"{os.path.join(args.mt_dest_file, 'mt_split','test_filenames.tsv')}", "a+", encoding="utf-8") as mt_test_filenames \
+         open(f"{os.path.join(args.mt_dest_file, 'mt_split','validation_filenames.tsv')}", "a+", encoding="utf-8") as mt_validation_filenames:
         for i in range(len(transcription_train)-1):
             mt_train.write( 
                 f"{transcription_train[i]} :: {translation_train[i]}\n")
+            mt_train_filenames.write(
+                f"{json_filenames_train[i]}\n"
+            )
         for i in range(len(transcription_test)-1):
             mt_test.write(
                 f"{transcription_test[i]} :: {translation_test[i]}\n")
+            mt_test_filenames.write(
+                f"{json_filenames_test[i]}\n"
+            )
         for i in range(len(transcription_validate)-1):
             mt_validate.write(
                 f"{transcription_validate[i]} :: {translation_validate[i]}\n")
-
+            mt_validate_filenames.write(
+                f"{json_filenames_validate[i]}\n"
+            )
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
