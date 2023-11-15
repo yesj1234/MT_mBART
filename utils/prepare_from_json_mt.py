@@ -20,6 +20,7 @@ logger.addHandler(streamHandler)
 def get_neccesary_info(json_file):
     json_data = json.load(json_file)
     json_filename = json_data["fi_sound_filepath"].split("/")[-3:]
+    json_filename = "/".join(json_filename)
     json_filename = json_filename.replace(".wav", ".json")
     
     transcription = json_data["tc_text"]
@@ -101,9 +102,9 @@ def main(args):
     
     with open(f"{os.path.join(args.mt_dest_file, 'mt_split', 'train.tsv')}", "a+", encoding="utf-8") as mt_train, \
          open(f"{os.path.join(args.mt_dest_file, 'mt_split','test.tsv')}", "a+", encoding="utf-8") as mt_test, \
-         open(f"{os.path.join(args.mt_dest_file, 'mt_split','validation.tsv')}", "a+", encoding="utf-8") as mt_validate \
-         open(f"{os.path.join(args.mt_dest_file, 'mt_split','train_filenames.tsv')}", "a+", encoding="utf-8") as mt_train_filenames \
-         open(f"{os.path.join(args.mt_dest_file, 'mt_split','test_filenames.tsv')}", "a+", encoding="utf-8") as mt_test_filenames \
+         open(f"{os.path.join(args.mt_dest_file, 'mt_split','validation.tsv')}", "a+", encoding="utf-8") as mt_validate, \
+         open(f"{os.path.join(args.mt_dest_file, 'mt_split','train_filenames.tsv')}", "a+", encoding="utf-8") as mt_train_filenames, \
+         open(f"{os.path.join(args.mt_dest_file, 'mt_split','test_filenames.tsv')}", "a+", encoding="utf-8") as mt_test_filenames, \
          open(f"{os.path.join(args.mt_dest_file, 'mt_split','validation_filenames.tsv')}", "a+", encoding="utf-8") as mt_validation_filenames:
         for i in range(len(transcription_train)-1):
             mt_train.write( 
