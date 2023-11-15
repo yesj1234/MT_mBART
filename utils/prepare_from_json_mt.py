@@ -110,19 +110,19 @@ def main(args):
             mt_train.write( 
                 f"{transcription_train[i]} :: {translation_train[i]}\n")
             mt_train_filenames.write(
-                f"{json_filenames_train[i]}\n"
+                f"{json_filenames_train[i]}\n :: {transcription_train[i]} :: {translation_train[i]}\n"
             )
         for i in range(len(transcription_test)-1):
             mt_test.write(
                 f"{transcription_test[i]} :: {translation_test[i]}\n")
             mt_test_filenames.write(
-                f"{json_filenames_test[i]}\n"
+                f"{json_filenames_test[i]} :: {transcription_test[i]} :: {translation_test[i]}\n"
             )
         for i in range(len(transcription_validate)-1):
             mt_validate.write(
                 f"{transcription_validate[i]} :: {translation_validate[i]}\n")
             mt_validate_filenames.write(
-                f"{json_filenames_validate[i]}\n"
+                f"{json_filenames_validate[i]} :: {transcription_validate[i]} :: {translation_validate[i]}\n"
             )
 
 if __name__ == "__main__":
