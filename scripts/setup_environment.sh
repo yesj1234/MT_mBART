@@ -12,10 +12,13 @@ sudo apt-get install -y cuda
 sudo apt install -y python3-pip 
 
 # 4. install python libraries 
-pip install transformers datasets torch torchaudio torchvision numpy jiwer evaluate
+pip install transformers datasets torch torchaudio numpy jiwer evaluate
 pip install mecab-python3
 pip install accelerate -U
 pip install --upgrade urllib3 requests
-pip install sentencepiece sacrebleu sacrebleu[ja] sacrebleu[ko]
+pip install sentencepiece 
+pip install sacrebleu 
+pip install sacrebleu[ja] 
+pip install sacrebleu[ko]
 pip install -U protobuf
 pip install wandb
