@@ -75,22 +75,30 @@ def split_data(pairs):
     return transcription_train, transcription_validate, transcription_test, translation_train, translation_validate, translation_test, json_filenames_train, json_filenames_validate, json_filenames_test
 
 def write_split_tsv(destination, transcriptions, translations):
-    assert isinstance(transcriptions, list) == False, "transcriptions should be a list"
-    assert isinstance(translations, list) == False, "translations should be a list"    
+    assert isinstance(transcriptions, np.ndarray) == True, "transcriptions should be a np.ndarray"
+    assert isinstance(translations, np.ndarray) == True, "translations should be a np.ndarray"    
 
-    split = str(destination).split("/")[-1]
-    logger.info(f"writing {split} in {destination}. transcription length: {len(transcriptions)}, translation length: {len(translations)}")
+    split_fname, ext = os.path.splitext(destination)
+    split_fname = split_fname.split("\\")[-1]
+    logger.info(f"""
+                writing {split_fname + ext} in {destination}. 
+                transcription length: {len(transcriptions)}
+                translation length  : {len(translations)}""")
     with open(destination, "a+", encoding = "utf-8") as split:
         for i in range(len(transcriptions)-1):
             split.write(f"{transcriptions[i]} :: {translations[i]}\n")
         
 def write_filename_tsv(destination, filenames, transcriptions, translations):
-    assert isinstance(transcriptions, list) == False, "transcriptions should be a list"
-    assert isinstance(translations, list) == False, "translations should be a list"    
-    assert isinstance(filenames, list) == False, "filenames should be a list"
+    assert isinstance(transcriptions, np.ndarray) == True, "transcriptions should be a np.ndarray"
+    assert isinstance(translations, np.ndarray) == True, "translations should be a np.ndarray"    
+    assert isinstance(filenames, np.ndarray) == True, "filenames should be a np.ndarray"
     
-    split = str(destination).split("/")[-1]
-    logger.info(f"writing {split} in {destination}. transcription length: {len(transcriptions)}, translation length: {len(translations)}")
+    split_fname, ext = os.path.splitext(destination)
+    split_fname = split_fname.split("\\")[-1]
+    logger.info(f"""
+                writing {split_fname + ext} in {destination}. 
+                transcription length: {len(transcriptions)} 
+                translation length  : {len(translations)}""")
     with open(destination, "a+", encoding = "utf-8") as split:
         for i in range(len(transcriptions)-1):
             split.write(f"{filenames[i]} :: {transcriptions[i]} :: {translations[i]}\n")
@@ -112,22 +120,30 @@ def main(args):
     translation_train, translation_validation, translation_test, \
     json_filenames_train, json_filenames_validation, json_filenames_test = split_data(transcription_translation_set)
 
-    write_split_tsv(destination = os.path.join(args.mt_dest_file, "mt_split", "train.tsv"), transcriptions = transcription_train, translations = translation_train)
-    write_split_tsv(destination = os.path.join(args.mt_dest_file, "mt_split", "validation.tsv"), transcriptions = transcription_validation, translations = translation_validation)
-    write_split_tsv(destination = os.path.join(args.mt_dest_file, "mt_split", "test.tsv"), transcriptions= transcription_test, translations = translation_test)
+    split_args = {
+        "split_tsv_args": [("train.tsv", transcription_train, translation_train),
+                           ("validation.tsv", transcription_validation, translation_validation),
+                           ("test.tsv", transcription_test, translation_test)],
+        "filename_tsv_args": [("filename_train.tsv", json_filenames_train, transcription_train, translation_train),
+                              ("filename_validation.tsv", json_filenames_validation, transcription_validation, translation_validation),
+                              ("filename_test.tsv", json_filenames_test, transcription_test, translation_test)]
+    }
     
-    write_filename_tsv(destination = os.path.join(args.mt_dest_file, "mt_split", "train_filenames.tsv"),
-                       filenames = json_filenames_train,
-                       transcriptions = transcription_train,
-                       translations = translation_train)
-    write_filename_tsv(destination = os.path.join(args.mt_dest_file, "mt_split", "validation_filenames.tsv"),
-                       filenames = json_filenames_validation,
-                       transcriptions = transcription_validation,
-                       translations = translation_validation)
-    write_filename_tsv(destination = os.path.join(args.mt_dest_file, "mt_split", "test_filenames.tsv"),
-                       filenames = json_filenames_test,
-                       transcriptions = transcription_test,
-                       translations = translation_test)
+    for args_tuple in split_args["split_tsv_args"]:
+        dest, transcription_list, translation_list = args_tuple
+        assert isinstance(dest, str) == True, "dest should be type of string."
+        write_split_tsv(destination = os.path.join(args.mt_dest_file, "mt_split", dest),
+                        transcriptions = transcription_list,
+                        translations=translation_list)
+    
+    for args_tuple in split_args["filename_tsv_args"]:
+        dest, filename_list, transcription_list, translation_list = args_tuple
+        assert isinstance(dest, str) == True, "dest should be type of string."
+        write_filename_tsv(destination = os.path.join(args.mt_dest_file, "mt_split", dest),
+                            filenames= filename_list,
+                            transcriptions = transcription_list,
+                            translations=translation_list)
+    
         
 
 if __name__ == "__main__":
