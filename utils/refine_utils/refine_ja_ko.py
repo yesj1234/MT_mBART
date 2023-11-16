@@ -12,7 +12,7 @@ from .refine_ko import refine_ko
 def refine_ja(line):
     matched = re.findall(BRACKET_PAIR_WITH_SLASH_JA, line) # （人んち）／（人の家） 혹은 (ほんまに)/(本当に) 
     if matched:
-        print(f"matched: {matched}")
+        # print(f"matched: {matched}")
         for item in matched:
             try: 
                 matched_part = re.search(BRACKET_PAIR_WITH_SLASH_JA_NO_GROUP, line).group()
