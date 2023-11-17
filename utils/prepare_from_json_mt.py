@@ -9,6 +9,7 @@
 import json
 import os
 import argparse
+from sys import platform
 import numpy as np
 import re
 import logging
@@ -79,7 +80,10 @@ def write_split_tsv(destination, transcriptions, translations):
     assert isinstance(translations, np.ndarray) == True, "translations should be a np.ndarray"    
 
     split_fname, ext = os.path.splitext(destination)
-    split_fname = split_fname.split("\\")[-1]
+    if platform == "win32":
+        split_fname = split_fname.split("\\")[-1]
+    else:
+        split_fname = split_fname.split("/")[-1]
     logger.info(f"""
                 writing {split_fname + ext} in {destination}. 
                 transcription length: {len(transcriptions)}
