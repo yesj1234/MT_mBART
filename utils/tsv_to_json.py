@@ -2,7 +2,7 @@
 import os
 import csv
 import json
-
+import traceback
 
 def main(args):
     # 1. load split.tsv
@@ -15,16 +15,14 @@ def main(args):
                 rows = []
                 with open(os.path.join(root, file), "r+", encoding="utf-8") as f:
                     split = csv.reader(f, delimiter="\n")
-                    for row in split:
-                        if row:
-                            try:
+                    try:
+                        for row in split:
+                            if row:
                                 source_lang, target_lang = row[0].split(" :: ")
                                 rows.append({f"{args.source_lang}": source_lang, f"{args.target_lang}": target_lang})
-                            except Exception as e:
-                                print(e)
-                                print(file)
-                                # print(row)
-                                pass
+                    except Exception as e:
+                        print(traceback.print_exc())
+                        pass 
                 new_json["translation"] = rows
                 #3. dump split.json
                 with open(os.path.join(root, f"{split_name}.json"), "w+", encoding="utf-8") as js:
