@@ -21,4 +21,3 @@ pip install sacrebleu
 pip install sacrebleu[ja] 
 pip install sacrebleu[ko]
 pip install -U protobuf
-pip install wandb
