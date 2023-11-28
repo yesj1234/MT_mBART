@@ -10,9 +10,11 @@ from .patterns import (
     SPECIAL_CHARS_FOR_KO,
     REMAINING_BRACKET_TO_REMOVE_KO,
     BRACKET_PAIR_KO_FAKE_REVERSE,
-    BRACKET_EX_WITHOUT_SLASH
+    BRACKET_EX_WITHOUT_SLASH,
+    BRACKET_PAIR_KO_FAKE_NO_SLASH_REVERSE
 )
 import re
+import traceback
 
 def refine_ko(line):
     matched = re.findall(BRACKET_PAIR_KO_PRONOUNCE, line) # (고것도)/(그것도)
@@ -22,8 +24,8 @@ def refine_ko(line):
                 first_part = item.split("/")[1] # (그것도)
                 first_part = re.sub(BRACKET_KO, "", first_part) # (그것도) -> 그것도
                 line = line.replace(item, first_part) # (고것도)/(그것도) -> 그것도 
-            except Exception as e:
-                print(e)
+            except Exception:
+                print(traceback.format_exc())
                 pass
     
     matched = re.findall(BRACKET_EX, line) # 뭣뭣/(무엇무엇)
@@ -50,8 +52,8 @@ def refine_ko(line):
                 first_part = re.sub(BRACKET_KO, "", first_part) # (로제) -> 로제
                 line = line.replace(item, first_part) # (로제)/(rose) -> 로제 
                 # print(f"formatted line: {line}")
-            except Exception as e:
-                print(e)
+            except Exception:
+                print(traceback.format_exc())
                 pass
     
     matched = re.findall(BRACKET_PAIR_KO_FAKE_REVERSE, line) # (rose)/(로제)
@@ -61,8 +63,8 @@ def refine_ko(line):
                 second_part = item.split("/")[1]
                 second_part = re.sub(BRACKET_KO, "", second_part)
                 line = line.replace(item, second_part)
-            except Exception as e:
-                print(e)
+            except Exception:
+                print(traceback.format_exc())
                 pass
 
     matched = re.findall(BRACKET_PAIR_KO_PRONOUNCE_NO_SLASH, line) # (요)(이)
@@ -74,8 +76,8 @@ def refine_ko(line):
                 selected_word = re.sub(BRACKET_KO, "", selected_word)
                 line = line.replace(item, selected_word)
                 # print(f"line: {line}")
-            except Exception as e:
-                print(e)
+            except Exception:
+                print(traceback.format_exc())
                 pass
             
     matched = re.findall(BRACKET_PAIR_KO_FAKE_NO_SLASH, line) # (로제)(rose)
@@ -87,10 +89,23 @@ def refine_ko(line):
                 selected_word = re.sub(BRACKET_KO, "", selected_word)
                 line = line.replace(item, selected_word)
                 # print(f"line: {line}")
-            except Exception as e:
-                print(e)
+            except Exception:
+                print(traceback.format_exc())
                 pass
     
+    matched = re.findall(BRACKET_PAIR_KO_FAKE_NO_SLASH_REVERSE, line) # (rose)(로제)
+    if matched:
+        for item in matched:
+            try:
+                selected_word = re.findall(BRACKET_WORD_PICKING, item)[1]
+                # print(f"selected_word from fake pattern: {selected_word}")
+                selected_word = re.sub(BRACKET_KO, "", selected_word)
+                line = line.replace(item, selected_word)
+                # print(f"line: {line}")
+            except Exception:
+                print(traceback.format_exc())
+                pass
+            
     matched = re.findall(BRACKET_KO_FAKE, line) # 로제(rose)
     if matched:
         for item in matched:
@@ -99,8 +114,8 @@ def refine_ko(line):
                 selected_word = item.split("(")[0]
                 # print(f"selected_word: {selected_word}")
                 line = line.replace(item, selected_word)
-            except Exception as e:
-                print(e)
+            except Exception:
+                print(traceback.format_exc())
                 pass
     
     matched = re.findall(REMAINING_BRACKET_TO_REMOVE_KO,line)# 남아 있는 괄호들 제거
@@ -114,7 +129,7 @@ def refine_ko(line):
         for item in matched:
             try:
                 line = line.replace(item, "")
-            except Exception as e:
-                print(e)
+            except Exception:
+                print(traceback.format_exc())
                 pass 
     return line 

@@ -13,7 +13,8 @@ BRACKET_KO_FAKE = re.compile("[ㄱ-ㅎ가-힣ㅏ-ㅣ]+?\s*?\(\s*?[a-zA-Z]+?\s*?\
 BRACKET_KO = re.compile("[\(\)]") # 2. (문자) 에서 () 를 지우기 위한 패턴
 
 BRACKET_PAIR_KO_PRONOUNCE_NO_SLASH = re.compile("\([^a-zA-Z]+?\)\([^a-zA-Z]+?\)") # (요)(이)
-BRACKET_PAIR_KO_FAKE_NO_SLASH = re.compile("\(.+?\)\([\?\&\s0-9a-zA-Z\'\"\-]+?\)") # (로제)(rose)
+BRACKET_PAIR_KO_FAKE_NO_SLASH = re.compile("\([ㄱ-ㅎ가-힣ㅏ-ㅣ!?@#$%^&*-_+=.,]+?\)\([\?\&\s0-9a-zA-Z\'\"\-]+?\)") # (로제)(rose)
+BRACKET_PAIR_KO_FAKE_NO_SLASH_REVERSE = re.compile("\([\?\&\s0-9a-zA-Z\'\"\-]+?\)\([ㄱ-ㅎ가-힣ㅏ-ㅣ!?@#$%^&*-_+=.,]+?\)") #(rose)(로제)
 BRACKET_WORD_PICKING = re.compile("\(.+?\)") # (요)(이) -> (요) 와 (이) 를 따로 찾기 위함. 
 
 BRACKET_EX = re.compile("[ㄱ-ㅎ가-힣ㅏ-ㅣ]+?\s*?\/\([\sㄱ-ㅎ가-힣ㅏ-ㅣ]\)") # 뭣뭣/(무엇무엇) 
@@ -68,7 +69,10 @@ SPECIAL_CHARS_FOR_JA = re.compile(f"[。,?.{comma_zh}{question_zh}!{exclamation_
 
 ##영어
 BRACKET_PAIR_EN = re.compile("\(\s*?.+?\s*?\)\s*?\(\s*?.+?\s*?\)") # (head)(head)
+BRACKET_PAIR_ABBREVIATION_EN = re.compile("\([A-Z_\-.,?!0-9\s]+?\)\s*?\([A-Za-z_\-.,?!0-9\s]+?\)") # (RV)(Recreational Vehicle)
 BRACKET_PAIR_EN_ONLY = re.compile("[\(\)]")
 
-BRACKET_PAIR_WITH_SLASH_EN = re.compile("\([\sa-zA-Z0-9\?\']+?\)\s*?\/\s*?\([\sa-zA-Z0-9\?\']+?\)") # (grandpa)/(grandfather)
+BRACKET_PAIR_WITH_SLASH_EN = re.compile("\([\sa-zA-Z0-9!@#$%^&*\-_+=']+?\)\s*?\/\s*?\([\sa-zA-Z0-9!@#$%^&*\-_+=']+?\)") # (grandpa)/(grandfather)
+# BRACKET_WITH_SLASH_INSIDE_EN = re.compile("\([a-zA-Z0-9!@#$%^&*-_=+\s].+?\/[a-zA-Z0-9!@#$%^&*-_=+\s].+?\)") # DFW(Dallas/Fort Worth) -> 달라스 포트 워스 지역
+BRACKET_WITH_KOREAN_EN = re.compile("\([ㄱ-ㅎ가-힣ㅏ-ㅣ\.\,\?\!\~\s]+?\)")
 REMAINING_BRACKET_TO_REMOVE = re.compile("[\(\)]")

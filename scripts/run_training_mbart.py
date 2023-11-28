@@ -76,7 +76,7 @@ MULTILINGUAL_TOKENIZERS = [MBartTokenizer, MBartTokenizerFast, MBart50Tokenizer,
 SACREBLEU_TOKENIZE = {
     "ko_KR": "ko-mecab",
     "ja_XX": "ja-mecab",
-    "en_XX": "13a",
+    "en_XX": "char",
     "zh_CN": "zh"
 }
 
