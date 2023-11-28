@@ -1,15 +1,13 @@
 import argparse
 import torch
-import librosa
 from tqdm import tqdm
 import logging 
 import sys
 import re 
 from time import time 
-
 from transformers import (
     MBartForConditionalGeneration, 
-    MBart50TokenizerFast
+    MBart50TokenizerFast,
 )
 from datasets import load_dataset 
 import evaluate
@@ -22,7 +20,7 @@ logging.basicConfig(
     datefmt="%m/%d/%Y %H:%M:%S",
     handlers=[logging.StreamHandler(sys.stdout)],
 )
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 SACREBLEU_TOKENIZE = {
     "ko_KR": "ko-mecab",
@@ -36,18 +34,14 @@ SACREBLEU_TOKENIZE = {
 def main(args):
     start_time = time()
 
-    if args.test_dataset:
-        test_dataset = load_dataset("json", data_files = args.test_dataset, field="translation")["train"]
-    if args.validation_dataset:
-        validation_dataset = load_dataset("json", data_files = args.validation_dataset, field = "translation")["train"]
+    raw_dataset = load_dataset("json", data_files = args.data, field="translation")["train"]
     
-    # raw_dataset = raw_dataset.map(remove_special_characters, num_proc = 8, desc="remove special chars")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
-    model = MBartForConditionalGeneration.from_pretrained(args.model_repo)
+    model = MBartForConditionalGeneration.from_pretrained(args.model_repo).to(device)
     tokenizer = MBart50TokenizerFast.from_pretrained(args.model_repo)
-    src_lang = args.src_lang
-    tgt_lang = args.tgt_lang
+    src_lang = args.src_lang.split("_")[0]
+    tgt_lang = args.tgt_lang.split("_")[0]
     metric = evaluate.load("sacrebleu")
     references_temp = []
     predictions_temp = []
@@ -56,9 +50,10 @@ def main(args):
         src_text = batch["en"]
         model_inputs = tokenizer(src_text, return_tensors="pt").to(device)
         with torch.no_grad():
-            generated_tokens = model.generate(**model_inputs, forced_bos_token_id=tokenizer.lang_code_to_id[src_lang]).to(device)
+            generated_tokens = model.generate(**model_inputs).to(device)
         prediction = tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)
-        return prediction
+        batch["prediction"] = prediction[0]
+        return batch
     
     def compute_bleu(preds, refs):  
         result = metric.compute(predictions=preds, references=refs, tokenize=SACREBLEU_TOKENIZE[args.tgt_lang])
@@ -71,54 +66,46 @@ def main(args):
         result = {k: round(v, 4) for k, v in result.items()}
         return result
     
-    logger.info("***** Running Evaluation *****")
-    for batch in tqdm(validation_dataset):
-        try:
-            predicted_sentence = generate_predictions(batch)
-            predicted_sentence = predicted_sentence[0].strip()
-            predictions_temp.append(predicted_sentence)
-            references_temp.append(batch[tgt_lang])
-        except Exception as e:
-            logger.warning(e)
-            pass
-        
-    references = []
-    predictions = []
-    
-    logger.info("***** Simple postprocessing *****")
-    for i, pair in tqdm(enumerate(zip(predictions_temp, references_temp))):
-        prediction, reference =pair
-        prediction = prediction.strip()
+    def post_processing(batch):
+        prediction = batch["prediction"].strip()
         prediction = "".join(list(prediction)).lower()
-        reference = reference.strip()
+        reference = batch[tgt_lang].strip()
         reference = "".join(list(reference)).lower()
+        batch["prediction"] = prediction
+        batch["reference"] = reference
+        return batch        
+        
+    raw_dataset.map(generate_predictions)
+    raw_dataset.map(post_processing)
+    
     
     with open("predictions.txt", "w+", encoding="utf-8") as f:
-        for prediction, reference in zip(predictions, references):
-            f.write(f"{prediction} :: {reference}\n")
+        for row in raw_dataset:
+            f.write(f"{row}\n")
     
-    try:
-        result = compute_bleu(preds=predictions, refs=references)
-        logger.info(f"""
-                    ***** eval metrics *****
-                      eval_samples: {len(predictions)}
-                      eval_result : {result}
-                      eval_runtime: {time() - start_time} 
-                    """)
-    except Exception as e:
-        print(e)
+    # try:
+    #     result = compute_bleu(preds=predictions, refs=references)
+    #     logger.info(f"""
+    #                 ***** eval metrics *****
+    #                   eval_samples: {len(predictions)}
+    #                   eval_result : {result}
+    #                   eval_runtime: {time() - start_time} 
+    #                 """)
+    # except Exception as e:
+    #     print(e)
     
-    with open("samples_metrics.txt", mode="w+", encoding = "utf-8") as f:        
-        for pred, ref in zip(predictions, references):
-            bleu = compute_bleu(predictions = [pred], references = [ref])
-            f.write(f"{pred} :: {ref} :: bleu: {bleu['score']}\n")    
+    # with open("samples_metrics.txt", mode="w+", encoding = "utf-8") as f:        
+    #     for pred, ref in zip(predictions, references):
+    #         bleu = compute_bleu(predictions = [pred], references = [ref])
+    #         f.write(f"{pred} :: {ref} :: bleu: {bleu['score']}\n")    
         
     
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model_dir", help="fine tuned model dir. relative dir path, or repo_id from huggingface")
-    parser.add_argument("--load_script", help="script used for loading dataset for computing metrics.")
-    parser.add_argument("--lang", help="ko ja zh en")
+    parser.add_argument("--model_repo", help="fine tuned model dir. relative dir path, or repo_id from huggingface")
+    parser.add_argument("--data", help="path to test data in json format")
+    parser.add_argument("--src_lang", help="ko_KR ja_XX zh_CN en_XX")
+    parser.add_argument("--tgt_lang", help="ko_KR ja_XX zh_CN en_XX")
     args = parser.parse_args()
     main(args)
