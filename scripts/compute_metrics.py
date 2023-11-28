@@ -25,7 +25,7 @@ logger.setLevel(logging.DEBUG)
 SACREBLEU_TOKENIZE = {
     "ko_KR": "ko-mecab",
     "ja_XX": "ja-mecab",
-    "en_XX": "13a",
+    "en_XX": "char",
     "zh_CN": "zh"
 }
 
@@ -48,44 +48,42 @@ def main(args):
     predictions = []
     def generate_predictions(batch):
         src_text = batch[src_lang]
+        tgt_text = batch[tgt_lang]
         model_inputs = tokenizer(src_text, max_length = 200, truncation=True, padding=True,return_tensors="pt").to(device)
         with torch.no_grad():
             generated_tokens = model.generate(**model_inputs).to(device)
         prediction = tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)
-        predictions.append(prediction)
-        references.append(src_text)
+        predictions.extend(prediction)
+        references.extend(tgt_text)
         
-    
-    def post_processing(batch):
-        prediction = batch["prediction"].strip()
-        prediction = "".join(list(prediction)).lower()
-        reference = batch[tgt_lang].strip()
-        reference = "".join(list(reference)).lower()
-        batch["prediction"] = prediction
-        batch["reference"] = reference
-        return batch        
-    
+    def my_log(num):
+        if num == 0.0:
+            return -9999999999
+        return math.log(num)
+
     def compute_bleu(preds, refs):  
         result = metric.compute(predictions=preds, references=refs, tokenize=SACREBLEU_TOKENIZE[args.tgt_lang])
         bp = result["bp"]    
         precisions = result["precisions"]
-        bleu_score  = bp * math.exp(sum([math.log(p) for p in precisions[:3]]) / 3)
+        bleu_score  = bp * math.exp(sum([my_log(p) for p in precisions[:3]]) / 3)
         result = {"bleu": bleu_score}
         prediction_lens = [np.count_nonzero(pred != tokenizer.pad_token_id) for pred in preds]
         result["gen_len"] = np.mean(prediction_lens)
         result = {k: round(v, 4) for k, v in result.items()}
         return result
     
-    raw_dataset.map(generate_predictions, batched = True, batch_size = 100)
-    predictions.map(post_processing)
-    references.map(post_processing)
+    raw_dataset.map(generate_predictions, batched = True, batch_size = 30)
+    print(predictions)
+    print(references)
+    predictions = list(map(lambda x: "".join(list(x.strip())).lower() , predictions))
+    references = list(map(lambda x: "".join(list(x.strip())).lower(), references))
     references = list(map(lambda x: [x], references))
     
     
     with open("predictions.txt", "w+", encoding="utf-8") as f:
         for pred, ref in zip(predictions, references):
-            bleu_score = compute_blue(predictions = [pred], references = [ref])
-            f.write(f"{pred} :: {ref} :: {bleu_score['score']}\n")
+            bleu_score = compute_bleu(preds = [pred], refs = [ref])
+            f.write(f"{pred} :: {ref[0]} :: {bleu_score['bleu']}\n")
     
     try:
         result = compute_bleu(preds=predictions, refs=references)
@@ -96,12 +94,7 @@ def main(args):
                       eval_runtime: {time() - start_time} 
                     """)
     except Exception as e:
-        print(e)
-    
-    # with open("samples_metrics.txt", mode="w+", encoding = "utf-8") as f:        
-    #     for pred, ref in zip(predictions, references):
-    #         bleu = compute_bleu(predictions = [pred], references = [ref])
-    #         f.write(f"{pred} :: {ref} :: bleu: {bleu['score']}\n")    
+        print(e)  
         
     
 
