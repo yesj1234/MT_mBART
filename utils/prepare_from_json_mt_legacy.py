@@ -86,8 +86,8 @@ def write_split_tsv(destination, transcriptions, translations):
         split_fname = split_fname.split("/")[-1]
     logger.info(f"""
                 writing {split_fname + ext} in {destination}. 
-                transcription length: {len(transcriptions)-1}
-                translation length  : {len(translations)-1}""")
+                transcription length: {len(transcriptions)}
+                translation length  : {len(translations)}""")
     with open(destination, "a+", encoding = "utf-8") as split:
         for i in range(len(transcriptions)-1):
             split.write(f"{transcriptions[i]} :: {translations[i]}\n")
@@ -101,8 +101,8 @@ def write_filename_tsv(destination, filenames, transcriptions, translations):
     split_fname = split_fname.split("\\")[-1]
     logger.info(f"""
                 writing {split_fname + ext} in {destination}. 
-                transcription length: {len(transcriptions)-1} 
-                translation length  : {len(translations)-1}""")
+                transcription length: {len(transcriptions)} 
+                translation length  : {len(translations)}""")
     with open(destination, "a+", encoding = "utf-8") as split:
         for i in range(len(transcriptions)-1):
             split.write(f"{filenames[i]} :: {transcriptions[i]} :: {translations[i]}\n")
