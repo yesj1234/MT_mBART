@@ -73,14 +73,12 @@ def main(args):
         return result
     
     raw_dataset.map(generate_predictions, batched = True, batch_size = 30)
-    print(predictions)
-    print(references)
     predictions = list(map(lambda x: "".join(list(x.strip())).lower() , predictions))
     references = list(map(lambda x: "".join(list(x.strip())).lower(), references))
     references = list(map(lambda x: [x], references))
     
     
-    with open("predictions.txt", "w+", encoding="utf-8") as f:
+    with open(f"{args.file_name}.txt", "w+", encoding="utf-8") as f:
         for pred, ref in zip(predictions, references):
             bleu_score = compute_bleu(preds = [pred], refs = [ref])
             f.write(f"{pred} :: {ref[0]} :: {bleu_score['bleu']}\n")
@@ -104,5 +102,6 @@ if __name__ == "__main__":
     parser.add_argument("--data", help="path to test data in json format")
     parser.add_argument("--src_lang", help="ko_KR ja_XX zh_CN en_XX")
     parser.add_argument("--tgt_lang", help="ko_KR ja_XX zh_CN en_XX")
+    parser.add_argument("--file_name", help="file name to save generated predictions")
     args = parser.parse_args()
     main(args)
