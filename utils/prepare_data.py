@@ -12,7 +12,7 @@ class DataSplitter:
         self.logger = logging.getLogger("splitting_logger")
         self.logger.setLevel(logging.INFO)
         self.streamHandler = logging.StreamHandler()
-        self.logger.addHandler(streamHandler)
+        self.logger.addHandler(self.streamHandler)
         
     def _get_necessary_info(self, json_file):
         json_data = json.load(json_file)
@@ -32,7 +32,7 @@ class DataSplitter:
         for root, dirs, files in os.walk(dir_path):
             if dirs:
                 for dir in dirs:
-                    logger.info(f"json files from {os.path.join(root, dir)}")
+                    self.logger.info(f"json files from {os.path.join(root, dir)}")
                     files = os.listdir(os.path.join(root, dir))
                     if files:
                         for file in files:
@@ -40,12 +40,12 @@ class DataSplitter:
                             if ext == ".json":
                                 with open(os.path.join(root, dir, file), "r", encoding="utf-8") as json_file:
                                     try:
-                                        transcription, translation, json_filename = get_neccesary_info(
+                                        transcription, translation, json_filename = self._get_necessary_info(
                                             json_file)
                                         pairs.append((transcription, translation, json_filename))
                                     except Exception as e:
-                                        logger.warning(e)
-                                        logger.warning(file)
+                                        self.logger.warning(e)
+                                        self.logger.warning(file)
         np.random.shuffle(pairs) # shuffle in-place and return none.
         maximum_index = int(len(pairs) * ratio)
         return pairs[:maximum_index] # return the given ratio. defaults to 100%. 
@@ -77,7 +77,7 @@ class DataSplitter:
 
         split_fname, ext = os.path.splitext(destination)
         split_fname = split_fname.split("/")[-1]
-        logger.info(f"""
+        self.logger.info(f"""
                     writing {split_fname + ext} in {destination}. 
                     transcription length: {len(transcriptions)}
                     translation length  : {len(translations)}""")
@@ -92,7 +92,7 @@ class DataSplitter:
         
         split_fname, ext = os.path.splitext(destination)
         split_fname = split_fname.split("/")[-1]
-        logger.info(f"""
+        self.logger.info(f"""
                     writing {split_fname + ext} in {destination}. 
                     transcription length: {len(transcriptions)} 
                     translation length  : {len(translations)}""")
@@ -100,19 +100,19 @@ class DataSplitter:
             for i in range(len(transcriptions)-1):
                 split.write(f"{filenames[i]} :: {transcriptions[i]} :: {translations[i]}\n") 
     
-    def split_data(args):
+    def split(self):
         np.random.seed(42) # for reproduciblitity
-        os.makedirs(os.path.join(args.mt_dest_file, "mt_split"), exist_ok=True)
-        categories_list = os.listdir(args.jsons) # ["게임_ca3", "교육_ca5", ...] , args.jsons = "/home/ubuntu/한국어_영어/'라벨링 데이터'"
-        categories_list = list(map(lambda x: os.path.join(args.jsons, x), categories_list))
+        os.makedirs(os.path.join(self.args.mt_dest_file, "mt_split"), exist_ok=True)
+        categories_list = os.listdir(self.args.jsons) # ["게임_ca3", "교육_ca5", ...] , args.jsons = "/home/ubuntu/한국어_영어/'라벨링 데이터'"
+        categories_list = list(map(lambda x: os.path.join(self.args.jsons, x), categories_list))
         transcription_translation_set = []
         for category_path in categories_list:
-            pairs = get_pairs(category_path, ratio = args.ratio)
+            pairs = self._get_pairs(category_path, ratio = self.args.ratio)
             transcription_translation_set = [*transcription_translation_set, *pairs]   
         np.random.shuffle(transcription_translation_set)    
         transcription_train, transcription_validation, transcription_test, \
         translation_train, translation_validation, translation_test, \
-        json_filenames_train, json_filenames_validation, json_filenames_test = split_data(transcription_translation_set)
+        json_filenames_train, json_filenames_validation, json_filenames_test = self._split_data(transcription_translation_set)
 
         split_args = {
             "split_tsv_args": [("train.tsv", transcription_train, translation_train),
@@ -126,14 +126,14 @@ class DataSplitter:
         for args_tuple in split_args["split_tsv_args"]:
             dest, transcription_list, translation_list = args_tuple
             assert isinstance(dest, str) == True, "dest should be type of string."
-            write_split_tsv(destination = os.path.join(args.mt_dest_file, "mt_split", dest),
+            self._write_split_tsv(destination = os.path.join(self.args.mt_dest_file, "mt_split", dest),
                             transcriptions = transcription_list,
                             translations=translation_list)
         
         for args_tuple in split_args["filename_tsv_args"]:
             dest, filename_list, transcription_list, translation_list = args_tuple
             assert isinstance(dest, str) == True, "dest should be type of string."
-            write_filename_tsv(destination = os.path.join(args.mt_dest_file, "mt_split", dest),
+            self._write_filename_tsv(destination = os.path.join(self.args.mt_dest_file, "mt_split", dest),
                                 filenames= filename_list,
                                 transcriptions = transcription_list,
                                 translations=translation_list)
@@ -149,4 +149,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     data_splitter = DataSplitter(args)
-    data_splitter.split_data()
+    data_splitter.split()
+    
+    
