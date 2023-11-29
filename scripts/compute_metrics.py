@@ -75,15 +75,11 @@ class Translator:
         self.predictions = list(map(lambda x: "".join(list(x.strip())).lower(), self.predictions))
         self.references = list(map(lambda x: "".join(list(x.strip())).lower(), self.references))
         self.references = list(map(lambda x: [x], self.references))
-
-        for pred, ref in zip(self.predictions, self.references):
-            bleu_score = self.compute_bleu(preds=[pred], refs=[ref])
-            self.bleu.append(bleu_score['bleu'])
         
-        with open(f"{self.args.file_name}.txt", "w+", encoding="utf-8") as f:
-            for pred, ref, bleu in zip(self.predictions, self.references, self.bleu):                
-                f.write(f"{pred} :: {ref[0]} :: {bleu}\n")
-
+        with open(f"{self.args.file_name}.txt", mode = "w+", encoding = "utf-8") as f:  
+            for pred, ref in zip(self.predictions, self.references):
+                f.write(f"{pred} :: {ref[0]}\n")
+             
         try:
             result = self.compute_bleu(preds=self.predictions, refs=self.references)
             self.logger.info(f"""
