@@ -18,14 +18,17 @@ class Translator:
         self.tgt_lang = args.tgt_lang.split("_")[0]
         self.predictions = []
         self.references = []
+        self.bleu = []
         self.metric = evaluate.load("sacrebleu")
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.model = MBartForConditionalGeneration.from_pretrained(self.args.model_repo).to(self.device)
+        self.tokenizer = MBart50TokenizerFast.from_pretrained(self.args.model_repo)
         self.SACREBLEU_TOKENIZE = {
             "ko_KR": "ko-mecab",
             "ja_XX": "ja-mecab",
             "en_XX": "char",
             "zh_CN": "zh"
         }
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.DEBUG)
         logging.basicConfig(
@@ -37,18 +40,13 @@ class Translator:
     def _load_data(self):
         return load_dataset("json", data_files=self.args.data, field="translation")["train"]
 
-    def _initialize_model(self):
-        model = MBartForConditionalGeneration.from_pretrained(self.args.model_repo).to(device)
-        tokenizer = MBart50TokenizerFast.from_pretrained(self.args.model_repo)
-        return model, tokenizer
-
     def _generate_predictions(self, batch):
-        src_text = batch[src_lang]
-        tgt_text = batch[tgt_lang]
-        model_inputs = tokenizer(src_text, max_length=200, truncation=True, padding=True, return_tensors="pt").to(device)
+        src_text = batch[self.src_lang]
+        tgt_text = batch[self.tgt_lang]
+        model_inputs = self.tokenizer(src_text, max_length=200, truncation=True, padding=True, return_tensors="pt").to(self.device)
         with torch.no_grad():
-            generated_tokens = model.generate(**model_inputs).to(device)
-        prediction = tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)
+            generated_tokens = self.model.generate(**model_inputs).to(self.device)
+        prediction = self.tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)
         self.predictions.extend(prediction)
         self.references.extend(tgt_text)
 
@@ -61,7 +59,7 @@ class Translator:
         result = self.metric.compute(predictions=preds, references=refs, tokenize=self.SACREBLEU_TOKENIZE[self.args.tgt_lang])
         bp = result["bp"]
         precisions = result["precisions"]
-        bleu_score = bp * math.exp(sum([self.my_log(p) for p in precisions[:3]]) / 3)
+        bleu_score = bp * math.exp(sum([self._my_log(p) for p in precisions[:3]]) / 3)
         result = {"bleu": bleu_score}
         prediction_lens = [np.count_nonzero(pred != self.tokenizer.pad_token_id) for pred in preds]
         result["gen_len"] = np.mean(prediction_lens)
@@ -72,20 +70,19 @@ class Translator:
         start_time = time()
 
         raw_dataset = self._load_data()
-        device, model, tokenizer= self._initialize_model()
 
-        self.predictions = []
-        self.references = []
-
-        raw_dataset.map(lambda x: self.generate_predictions(x, device, model, tokenizer, src_lang, tgt_lang), batched=True, batch_size=30)
+        raw_dataset.map(lambda x: self._generate_predictions(x), batched=True, batch_size=30)
         self.predictions = list(map(lambda x: "".join(list(x.strip())).lower(), self.predictions))
         self.references = list(map(lambda x: "".join(list(x.strip())).lower(), self.references))
         self.references = list(map(lambda x: [x], self.references))
 
+        for pred, ref in zip(self.predictions, self.references):
+            bleu_score = self.compute_bleu(preds=[pred], refs=[ref])
+            self.bleu.append(bleu_score['bleu'])
+        
         with open(f"{self.args.file_name}.txt", "w+", encoding="utf-8") as f:
-            for pred, ref in zip(self.predictions, self.references):
-                bleu_score = self.compute_bleu(preds=[pred], refs=[ref])
-                f.write(f"{pred} :: {ref[0]} :: {bleu_score['bleu']}\n")
+            for pred, ref, bleu in zip(self.predictions, self.references, self.bleu):                
+                f.write(f"{pred} :: {ref[0]} :: {bleu}\n")
 
         try:
             result = self.compute_bleu(preds=self.predictions, refs=self.references)
