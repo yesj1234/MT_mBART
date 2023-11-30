@@ -59,12 +59,3 @@ if __name__ == "__main__":
     with open(f"{args.prediction_file}_with_score.txt", mode = "w", encoding = "utf-8") as f:
         for row in new_ds:
             f.write(f"{row}\n")
-    # shard_size = 20 
-    # iterable_ds = ds.shard(num_shards = shard_size, index = 0)
-    # for i in range(shard_size):
-    #     iterable_ds = ds.shard(num_shards = shard_size,index = i)
-    #     new_ds = calculator.translate(iterable_ds)
-    #     with open(f"test_{i}th.txt", mode = "w", encoding = "utf-8") as f:
-    #         for row in new_ds:
-    #             f.write(f"{row}\n")
-    
