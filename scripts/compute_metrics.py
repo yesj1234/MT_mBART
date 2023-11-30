@@ -13,7 +13,7 @@ SACREBLEU_TOKENIZE = {
     "en_XX": "char",
     "zh_CN": "zh"
 }
-class Translator:
+class Calculator:
     def __init__(self, args):
         self.metric = evaluate.load("sacrebleu")       
         self.tgt_lang = args.tgt_lang
@@ -39,7 +39,7 @@ if __name__ == "__main__":
     parser.add_argument("--tgt_lang", help="ko_KR, ja_XX, zh_CN, en_XX")
     args = parser.parse_args()
     
-    translator = Translator(args)
+    calculator = Calculator(args)
     ds = load_dataset("csv", data_files = args.prediction_file)
     ds = ds["train"]
     
@@ -47,7 +47,7 @@ if __name__ == "__main__":
     iterable_ds = ds.shard(num_shards = shard_size, index = 0)
     for i in range(shard_size):
         iterable_ds = ds.shard(num_shards = shard_size,index = i)
-        new_ds = translator.translate(iterable_ds)
+        new_ds = calculator.translate(iterable_ds)
         with open(f"test_{i}th.txt", mode = "w", encoding = "utf-8") as f:
             for row in new_ds:
                 f.write(f"{row}\n")
