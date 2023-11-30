@@ -77,6 +77,7 @@ class Translator:
             self.bleu.append(bleu_score.score)
         
         with open(f"{self.args.file_name}.txt", "w+", encoding="utf-8") as f:
+            f.write(f"pairs\n")
             for pred, ref, bleu in zip(self.predictions, self.references, self.bleu):                
                 f.write(f"{pred} :: {ref[0]} :: {bleu}\n")
 
