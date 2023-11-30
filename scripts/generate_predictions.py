@@ -7,9 +7,10 @@ import re
 from time import time 
 from transformers import MBartForConditionalGeneration, MBart50TokenizerFast
 from datasets import load_dataset 
-import evaluate
+import sacrebleu
 import math
 import numpy as np
+
 
 class Translator:
     def __init__(self, args):
@@ -19,16 +20,10 @@ class Translator:
         self.predictions = []
         self.references = []
         self.bleu = []
-        self.metric = evaluate.load("sacrebleu")
+        self.metric = sacrebleu.BLEU(trg_lang=self.tgt_lang, max_ngram_order = 3, effective_order=True)
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model = MBartForConditionalGeneration.from_pretrained(self.args.model_repo).to(self.device)
         self.tokenizer = MBart50TokenizerFast.from_pretrained(self.args.model_repo)
-        self.SACREBLEU_TOKENIZE = {
-            "ko_KR": "ko-mecab",
-            "ja_XX": "ja-mecab",
-            "en_XX": "char",
-            "zh_CN": "zh"
-        }
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.DEBUG)
         logging.basicConfig(
@@ -39,17 +34,7 @@ class Translator:
 
     def _load_data(self):
         return load_dataset("json", data_files=self.args.data, field="translation")["train"]
-
-    def _generate_predictions(self, batch):
-        src_text = batch[self.src_lang]
-        tgt_text = batch[self.tgt_lang]
-        model_inputs = self.tokenizer(src_text, max_length=200, truncation=True, padding=True, return_tensors="pt").to(self.device)
-        with torch.no_grad():
-            generated_tokens = self.model.generate(**model_inputs).to(self.device)
-        prediction = self.tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)
-        self.predictions.extend(prediction)
-        self.references.extend(tgt_text)
-
+    
     def _my_log(self, num):
         if num == 0.0:
             return -9999999999
@@ -65,7 +50,18 @@ class Translator:
         result["gen_len"] = np.mean(prediction_lens)
         result = {k: round(v, 4) for k, v in result.items()}
         return result
+    
+    def _generate_predictions(self, batch):
+        src_text = batch[self.src_lang]
+        tgt_text = batch[self.tgt_lang]
+        model_inputs = self.tokenizer(src_text, max_length=200, truncation=True, padding=True, return_tensors="pt").to(self.device)
+        with torch.no_grad():
+            generated_tokens = self.model.generate(**model_inputs).to(self.device)
+        prediction = self.tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)
+        self.predictions.extend(prediction)
+        self.references.extend(tgt_text)
 
+    
     def run_translation(self):
         start_time = time()
 
@@ -77,8 +73,8 @@ class Translator:
         self.references = list(map(lambda x: [x], self.references))
 
         for pred, ref in zip(self.predictions, self.references):
-            bleu_score = self.compute_bleu(preds=[pred], refs=[ref])
-            self.bleu.append(bleu_score['bleu'])
+            bleu_score = self.metric.sentence_score(hypothesis= pred, references=[ref])
+            self.bleu.append(bleu_score.score)
         
         with open(f"{self.args.file_name}.txt", "w+", encoding="utf-8") as f:
             for pred, ref, bleu in zip(self.predictions, self.references, self.bleu):                
