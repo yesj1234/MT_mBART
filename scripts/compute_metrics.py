@@ -56,6 +56,7 @@ if __name__ == "__main__":
     ds = load_dataset("csv", data_files = args.prediction_file, delimiter = "\t", encoding = "utf-8", encoding_errors="ignore")
     ds = ds["train"]
     new_ds = calculator.calculate(ds)
-    with open(f"{args.prediction_file}_with_score.txt", mode = "w", encoding = "utf-8") as f:
+    fname, ext = os.path.splitext(args.prediction_file)
+    with open(f"{fname}_with_score.txt", mode = "w", encoding = "utf-8") as f:
         for row in new_ds:
-            f.write(f"{row}\n")
+            f.write(f"{row['pairs']} :: {round(row['score'],2)}\n")
