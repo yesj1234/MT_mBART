@@ -4,6 +4,7 @@ from tqdm import tqdm
 import logging 
 import sys
 import re 
+import evaluate
 from time import time 
 from transformers import MBartForConditionalGeneration, MBart50TokenizerFast
 from datasets import load_dataset 
@@ -21,11 +22,18 @@ class Translator:
         self.references = []
         self.bleu = []
         self.metric = sacrebleu.BLEU(trg_lang=self.tgt_lang, max_ngram_order = 3, effective_order=True)
+        self.evaluate_metric = evaluate.load("sacrebleu")
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model = MBartForConditionalGeneration.from_pretrained(self.args.model_repo).to(self.device)
         self.tokenizer = MBart50TokenizerFast.from_pretrained(self.args.model_repo)
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.DEBUG)
+        self.SACREBLEU_TOKENIZE = {
+            "ko_KR": "ko-mecab",
+            "ja_XX": "ja-mecab",
+            "en_XX": "char",
+            "zh_CN": "zh"
+        }
         logging.basicConfig(
             format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
             datefmt="%m/%d/%Y %H:%M:%S",
@@ -41,7 +49,7 @@ class Translator:
         return math.log(num)
 
     def compute_bleu(self, preds, refs):
-        result = self.metric.compute(predictions=preds, references=refs, tokenize=self.SACREBLEU_TOKENIZE[self.args.tgt_lang])
+        result = self.evaluate_metric.compute(predictions=preds, references=refs, tokenize=self.SACREBLEU_TOKENIZE[self.args.tgt_lang])
         bp = result["bp"]
         precisions = result["precisions"]
         bleu_score = bp * math.exp(sum([self._my_log(p) for p in precisions[:3]]) / 3)
@@ -73,7 +81,7 @@ class Translator:
         self.references = list(map(lambda x: [x], self.references))
 
         for pred, ref in zip(self.predictions, self.references):
-            bleu_score = self.metric.sentence_score(hypothesis= pred, references=[ref])
+            bleu_score = self.metric.sentence_score(hypothesis= pred, references=ref)
             self.bleu.append(bleu_score.score)
         
         with open(f"{self.args.file_name}.txt", "w+", encoding="utf-8") as f:
