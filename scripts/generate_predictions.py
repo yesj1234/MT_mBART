@@ -68,16 +68,18 @@ class Translator:
         prediction = self.tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)
         self.predictions.extend(prediction)
         self.references.extend(tgt_text)
-
     
+
     def run_translation(self):
         start_time = time()
 
         raw_dataset = self._load_data()
 
-        raw_dataset.map(lambda x: self._generate_predictions(x), batched=True, batch_size=30)
-        self.predictions = list(map(lambda x: "".join(list(x.strip())).lower(), self.predictions))
+        raw_dataset.map(lambda x: self._generate_predictions(x), batched=True, batch_size=30) 
+        self.predictions = list(map(lambda x: "".join(list(x.strip())).lower(), self.predictions)) # simple post processing. 
+        self.predictions = list(map(lambda x: x.replace("\t", ""), self.predictions)) # remove tab in each example.
         self.references = list(map(lambda x: "".join(list(x.strip())).lower(), self.references))
+        self.references = list(map(lambda x: x.replace("\t", ""), self.references)) 
         self.references = list(map(lambda x: [x], self.references))
 
         for pred, ref in zip(self.predictions, self.references):
