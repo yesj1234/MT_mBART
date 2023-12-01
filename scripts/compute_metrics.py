@@ -53,7 +53,7 @@ if __name__ == "__main__":
     parser.add_argument("--trg_lang", help="ko, ja, zh, en")
     args = parser.parse_args()
     calculator = Calculator(args)
-    ds = load_dataset("csv", data_files = args.prediction_file)
+    ds = load_dataset("csv", data_files = args.prediction_file, delimiter = "\t", encoding = "utf-8", encoding_errors="ignore")
     ds = ds["train"]
     new_ds = calculator.calculate(ds)
     with open(f"{args.prediction_file}_with_score.txt", mode = "w", encoding = "utf-8") as f:
