@@ -3,6 +3,11 @@ FROM pytorch/pytorch:2.0.1-cuda11.7-cudnn8-devel
 WORKDIR /home
 
 COPY . .
+RUN ln -snf /usr/share/zoneinfo/$CONTAINER_TIMEZONE /etc/localtime && echo $CONTAINER_TIMEZONE > /etc/timezone
+RUN apt-get update && apt-get install -y locales
+RUN locale-gen ko_KR.UTF-8
+ENV LC_ALL ko_KR.UTF-8
+RUN apt-get install -y wget sudo 
 
 RUN python -m pip install --upgrade pip 
 RUN python -m pip install transformers 

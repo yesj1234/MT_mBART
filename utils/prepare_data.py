@@ -79,8 +79,8 @@ class DataSplitter:
         split_fname = split_fname.split("/")[-1]
         self.logger.info(f"""
                     writing {split_fname + ext} in {destination}. 
-                    transcription length: {len(transcriptions)}
-                    translation length  : {len(translations)}""")
+                    transcription length: {len(transcriptions)-1}
+                    translation length  : {len(translations)-1}""")
         with open(destination, "a+", encoding = "utf-8") as split:
             for i in range(len(transcriptions)-1):
                 split.write(f"{transcriptions[i]} :: {translations[i]}\n")
@@ -94,8 +94,8 @@ class DataSplitter:
         split_fname = split_fname.split("/")[-1]
         self.logger.info(f"""
                     writing {split_fname + ext} in {destination}. 
-                    transcription length: {len(transcriptions)} 
-                    translation length  : {len(translations)}""")
+                    transcription length: {len(transcriptions)-1} 
+                    translation length  : {len(translations)-1}""")
         with open(destination, "a+", encoding = "utf-8") as split:
             for i in range(len(transcriptions)-1):
                 split.write(f"{filenames[i]} :: {transcriptions[i]} :: {translations[i]}\n") 
