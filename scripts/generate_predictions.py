@@ -84,7 +84,7 @@ class Translator:
 
         for pred, ref in zip(self.predictions, self.references):
             bleu_score = self.metric.sentence_score(hypothesis= pred, references=ref)
-            self.bleu.append(bleu_score.score)
+            self.bleu.append(round(bleu_score.score, 2))
         
         with open(f"{self.args.file_name}.txt", "w+", encoding="utf-8") as f:
             f.write(f"pairs\n")
