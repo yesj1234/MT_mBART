@@ -1,16 +1,15 @@
 #! /usr/bin/env bash 
 
-export PREPARE_DATA=./prepare_data.py
+export FROM_JSON=./from_json.py
 export TSV_TO_JSON=./tsv_to_json.py
 export REFINE_DATA=./refine_data.py
-export SOURCE_LANG=ko
-export TARGET_LANG=en
-export SPLITS_DIR=/home/ubuntu/data/mt_split
+export SOURCE_LANG=en
+export TARGET_LANG=ko
+export SPLITS_DIR=/home/ubuntu/mt_split
 
-python3 $PREPARE_DATA \
---mt_dest_file /home/ubuntu/data \
---jsons /home/ubuntu/data/ \
---ratio 1
+python3 from_json.py --jsons /home/ubuntu/1.Training/2.영어/ --dest /home/ubuntu/mt_split/train.tsv 
+python3 from_json.py --jsons /home/ubuntu/2.Validation/2.영어/ --dest /home/ubuntu/mt_split/validation.tsv 
+python3 from_json.py --jsons /home/ubuntu/3.Test/2.영어/ --dest /home/ubuntu/mt_split/test.tsv 
 
 python3 $REFINE_DATA \
 --tsv_splits_dir $SPLITS_DIR \
