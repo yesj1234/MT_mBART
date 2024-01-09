@@ -41,7 +41,7 @@ def main(args):
                     for line in lines: 
                         try:
                             transcription, translation = langs_mapper[args.langs](line)
-                            new_lines.append(f"{transcription} :: {translation}")
+                            new_lines.append(f"{transcription} :: {translation}\n")
                         except Exception as e:
                             logger.warning(e)
                             logger.warning(file)
