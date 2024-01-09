@@ -28,6 +28,7 @@ langs_mapper ={
     "zh_ko": refine_zh_ko
 }
 file_to_refine = ["test", "train", "validation"]
+
 def main(args):
     for root, _dir, files in os.walk(args.tsv_splits_dir):
         for file in files:

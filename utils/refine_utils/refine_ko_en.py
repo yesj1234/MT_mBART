@@ -30,10 +30,18 @@ def refine_en(line):
         line = re.sub(REMAINING_BRACKET_TO_REMOVE, "", line)
     return line 
 
+def remove_space(line):
+    if not line: 
+        return ""
+    line = line.split()
+    line = " ".join(line)
+    return line
 
 
 def refine_ko_en(line):
     transcription, translation = line.split(" :: ")
     transcription = refine_ko(transcription)
     translation = refine_en(translation)
+    transcription = remove_space(transcription)
+    translation = remove_space(translation)
     return transcription, translation

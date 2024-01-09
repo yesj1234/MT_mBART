@@ -3,7 +3,7 @@ import sys
 import logging 
 import argparse 
 import json 
-
+import re
 class FromJson: 
     def __init__(self, args):
         self.args = args
@@ -14,16 +14,13 @@ class FromJson:
 
     def gen_row(self, json_file): 
         json_data = json.load(json_file)
-        json_filename = json_data["fi_sound_filepath"].split("/")[-3:]
-        json_filename = "/".join(json_filename)
-        json_filename = json_filename.replace(".wav", ".json")
         
         transcription = json_data["tc_text"]
         transcription = re.sub("\n", " ", transcription)
         
         translation = json_data["tl_trans_text"]
         translation = re.sub("\n", " ", translation)
-        return transcription, translation, json_filename
+        return transcription, translation
     
     
     def main(self): 
@@ -34,8 +31,8 @@ class FromJson:
                     _fname, ext = os.path.splitext(file)
                     if ext == ".json":
                         with open(os.path.join(_root, file), "r", encoding = "utf-8") as cur_json:
-                            path, transcription, json_file_name = self.gen_row(cur_json)  
-                            rows.append((path, transcription, json_file_name))
+                            path, transcription = self.gen_row(cur_json)  
+                            rows.append((path, transcription))
         # check if the dest folder exists 
         _dest_folder = self.args.dest.split("/")[:-1]
         _dest_folder = "/".join(_dest_folder)
@@ -43,7 +40,7 @@ class FromJson:
             os.makedirs(os.path.join(_dest_folder))
         with open(f"{self.args.dest}", "w+", encoding="utf-8") as cur_tsv:
             for row in rows:
-                cur_tsv.write(f"{row[0]} :: {row[1]} :: {row[2]}\n") 
+                cur_tsv.write(f"{row[0]} :: {row[1]}\n") 
 
 if __name__ == "__main__": 
     parser = argparse.ArgumentParser()
