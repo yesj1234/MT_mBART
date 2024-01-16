@@ -7,9 +7,9 @@ export SOURCE_LANG=en
 export TARGET_LANG=ko
 export SPLITS_DIR=/home/ubuntu/mt_split
 
-python3 from_json.py --jsons /home/ubuntu/1.Training/2.영어/ --dest /home/ubuntu/mt_split/train.tsv 
-python3 from_json.py --jsons /home/ubuntu/2.Validation/2.영어/ --dest /home/ubuntu/mt_split/validation.tsv 
-python3 from_json.py --jsons /home/ubuntu/3.Test/2.영어/ --dest /home/ubuntu/mt_split/test.tsv 
+python3 from_json.py --jsons /home/ubuntu/1.Training/2.영어/ --dest ${SPLITS_DIR}/train.tsv 
+python3 from_json.py --jsons /home/ubuntu/2.Validation/2.영어/ --dest ${SPLITS_DIR}/validation.tsv 
+python3 from_json.py --jsons /home/ubuntu/3.Test/2.영어/ --dest ${SPLITS_DIR}/test.tsv 
 
 python3 $REFINE_DATA \
 --tsv_splits_dir $SPLITS_DIR \
